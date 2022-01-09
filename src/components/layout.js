@@ -1,5 +1,8 @@
 import * as React from "react"
 import { Link } from "gatsby"
+import "@fontsource/noto-sans-jp"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faCat } from "@fortawesome/free-solid-svg-icons"
 
 const Layout = ({ location, title, children }) => {
   const rootPath = `${__PATH_PREFIX__}/`
@@ -9,14 +12,21 @@ const Layout = ({ location, title, children }) => {
   if (isRootPath) {
     header = (
       <h1 className="main-heading">
+        <FontAwesomeIcon icon={faCat} />
+        {` `}
         <Link to="/">{title}</Link>
       </h1>
     )
   } else {
     header = (
-      <Link className="header-link-home" to="/">
-        {title}
-      </Link>
+      //<Link className="header-link-home" to="/">
+      <h1>
+        <FontAwesomeIcon icon={faCat} />
+        {` `}
+        <Link className="main-heading" to="/">
+          {title}
+        </Link>
+      </h1>
     )
   }
 
@@ -25,7 +35,7 @@ const Layout = ({ location, title, children }) => {
       <header className="global-header">{header}</header>
       <main>{children}</main>
       <footer>
-        © {new Date().getFullYear()}, Built with
+        © {new Date().getFullYear()} ochisamu, Built with
         {` `}
         <a href="https://www.gatsbyjs.com">Gatsby</a>
       </footer>
