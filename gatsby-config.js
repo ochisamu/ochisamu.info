@@ -13,6 +13,7 @@ module.exports = {
     },
   },
   plugins: [
+    `gatsby-plugin-sitemap`, 
     `gatsby-plugin-image`,
     {
       resolve: `gatsby-source-filesystem`,
@@ -45,6 +46,16 @@ module.exports = {
             },
           },
           `gatsby-remark-prismjs`,
+          {
+            resolve: `gatsby-remark-prismjs`,
+            options: {
+              classPrefix: "language-",
+              inlineCodeMarker: null,
+              aliases: {},
+              showLineNumbers: false,
+              noInlineHighlight: false
+            }
+          },
           `gatsby-remark-copy-linked-files`,
           `gatsby-remark-smartypants`,
         ],
@@ -55,9 +66,18 @@ module.exports = {
     // {
     //   resolve: `gatsby-plugin-google-analytics`,
     //   options: {
-    //     trackingId: `ADD YOUR TRACKING ID HERE`,
+    //     trackingId: `G-85ZKNM6JX0`,
     //   },
     // },
+    {
+      resolve: `gatsby-plugin-google-gtag`,
+      options: {
+        // You can add multiple tracking ids and a pageview event will be fired for all of them.
+        trackingIds: [
+          "G-85ZKNM6JX0"
+        ],
+      },
+    },
     {
       resolve: `gatsby-plugin-feed`,
       options: {
