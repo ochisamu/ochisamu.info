@@ -1,7 +1,7 @@
 ---
 title: はじめに
 date: "2021-01-09"
-description: "はじめに"
+tags: ["Gatsby", "AWS", "その他"]
 ---
 
 ## 概要

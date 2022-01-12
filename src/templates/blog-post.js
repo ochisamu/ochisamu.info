@@ -1,5 +1,6 @@
 import * as React from "react"
 import { Link, graphql } from "gatsby"
+import _ from "lodash"
 
 import Bio from "../components/bio"
 import Layout from "../components/layout"
@@ -23,7 +24,22 @@ const BlogPostTemplate = ({ data, location }) => {
       >
         <header>
           <h1 itemProp="headline">{post.frontmatter.title}</h1>
-          <p>{post.frontmatter.date}</p>
+          <p>
+            <div className="post-date">
+              {post.frontmatter.date}
+            </div>
+            <div className="post-tags">
+              <small>
+                {post.frontmatter.tags.map(tag => {
+                  return <span>
+                    <Link to={`/tags/${_.kebabCase(tag)}/`}>
+                      {tag}
+                    </Link>{` `}
+                  </span>
+                })}
+              </small>
+            </div>
+          </p>
         </header>
         <section
           dangerouslySetInnerHTML={{ __html: post.html }}
@@ -85,6 +101,7 @@ export const pageQuery = graphql`
         title
         date(formatString: "MMMM DD, YYYY")
         description
+        tags
       }
     }
     previous: markdownRemark(id: { eq: $previousPostId }) {
