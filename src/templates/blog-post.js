@@ -6,6 +6,10 @@ import Bio from "../components/bio"
 import Layout from "../components/layout"
 import Seo from "../components/seo"
 
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faClock } from "@fortawesome/free-regular-svg-icons"
+import { faHashtag } from "@fortawesome/free-solid-svg-icons"
+
 const BlogPostTemplate = ({ data, location }) => {
   const post = data.markdownRemark
   const siteTitle = data.site.siteMetadata?.title || `Title`
@@ -26,14 +30,14 @@ const BlogPostTemplate = ({ data, location }) => {
           <h1 itemProp="headline">{post.frontmatter.title}</h1>
           <p>
             <div className="post-date">
-              {post.frontmatter.date}
+              <FontAwesomeIcon icon={faClock} /> {post.frontmatter.date}
             </div>
             <div className="post-tags">
               <small>
                 {post.frontmatter.tags.map(tag => {
                   return <span>
                     <Link to={`/tags/${_.kebabCase(tag)}/`}>
-                      {tag}
+                      <FontAwesomeIcon icon={faHashtag} />{tag}
                     </Link>{` `}
                   </span>
                 })}

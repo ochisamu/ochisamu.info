@@ -154,9 +154,21 @@ module.exports = {
       resolve: 'gatsby-transformer-remark',
       options: {
         plugins: [
-          'gatsby-remark-mermaid'
+          {
+            resolve: `gatsby-remark-table-of-contents`,
+            options: {
+              exclude: "目次",
+              tight: false,
+              ordered: true,
+              fromHeading: 1,
+              toHeading: 2,
+              className: "toc"
+            },
+          },
+          `gatsby-remark-mermaid`,
+          `gatsby-remark-autolink-headers`,
         ]
       }
-    }
+    },
   ],
 }

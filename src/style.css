@@ -27,7 +27,7 @@
   --spacing-20: 5rem;
   --spacing-24: 6rem;
   --spacing-32: 8rem;
-  --fontFamily-sans: 'Noto Sans JP', sans-serif
+  --fontFamily-sans: 'Noto Sans JP', sans-serif;
 /*
   --fontFamily-sans: 'Noto Sans JP', Montserrat, system-ui, -apple-system, BlinkMacSystemFont,
     "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif,
@@ -333,4 +333,34 @@ a:focus {
   ol {
     list-style-position: inside;
   }
+}
+
+.toc {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: var(--spacing-16);
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgb(0 0 0 / 20%);
+  padding: var(--spacing-6);
+}
+
+.toc ol {
+  flex: 1 1 auto;
+  line-height: 1.0;
+  margin: 0;
+}
+
+.toc ol li {
+  list-style-type: decimal;
+  margin-left: var(--spacing-4);
+}
+
+.toc ol li::before {
+  color: #aaa;
+  display: inline-block;
+  margin-right: var(--spacing-2);
+}
+
+.post-tags a {
+  margin-right: var(--spacing-2);
 }
