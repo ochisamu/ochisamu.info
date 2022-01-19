@@ -4,7 +4,14 @@ date: "2021-01-19"
 tags: ["Gatsby", "mermaid-js", "test"]
 ---
 
+## 目次
+
+```toc
+```
+
 ## mermaid.jsのテスト1
+
+### LR
 
 ```mermaid
 graph LR
@@ -15,6 +22,8 @@ user[fas:fa-users user] -- edit --> folder[:smiles: test]
 ```
 
 ## mermaid.jsのテスト2
+
+### sequenceDiagram
 
 ```mermaid
 sequenceDiagram

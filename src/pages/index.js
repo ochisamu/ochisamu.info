@@ -6,6 +6,10 @@ import Bio from "../components/bio"
 import Layout from "../components/layout"
 import Seo from "../components/seo"
 
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faClock } from "@fortawesome/free-regular-svg-icons"
+import { faHashtag } from "@fortawesome/free-solid-svg-icons"
+
 const BlogIndex = ({ data, location }) => {
   const siteTitle = data.site.siteMetadata?.title || `Title`
   const posts = data.allMarkdownRemark.nodes
@@ -46,28 +50,20 @@ const BlogIndex = ({ data, location }) => {
                     </Link>
                   </h2>
                   <div className="post-date">
-                    <small>{post.frontmatter.date}</small>
+                    <small> <FontAwesomeIcon icon={faClock} /> {post.frontmatter.date}</small>
                   </div>
                   <div className="post-tags">
                     <small>
                         {post.frontmatter.tags.map(tag => {
                             return <span>
                                 <Link to={`/tags/${_.kebabCase(tag)}/`}>
-                                    {tag}
+                                    <FontAwesomeIcon icon={faHashtag} />{tag}
                                 </Link>{` `}
                             </span>
                         })}
                     </small>
                   </div>
                 </header>
-                <section>
-                  <p
-                    dangerouslySetInnerHTML={{
-                      __html: post.frontmatter.description || post.excerpt,
-                    }}
-                    itemProp="description"
-                  />
-                </section>
               </article>
             </li>
           )

@@ -26,12 +26,15 @@
     "gatsby-plugin-react-helmet": "^5.4.0",
     "gatsby-plugin-sharp": "^4.4.0",
     "gatsby-plugin-sitemap": "^5.4.0",
+    "gatsby-plugin-typography": "^4.5.0",
+    "gatsby-remark-autolink-headers": "^5.5.0",
     "gatsby-remark-copy-linked-files": "^5.4.0",
     "gatsby-remark-images": "^6.4.0",
     "gatsby-remark-mermaid": "^2.1.0",
     "gatsby-remark-prismjs": "^6.4.0",
     "gatsby-remark-responsive-iframe": "^5.4.0",
     "gatsby-remark-smartypants": "^5.4.0",
+    "gatsby-remark-table-of-contents": "^1.0.0",
     "gatsby-source-filesystem": "^4.4.0",
     "gatsby-transformer-remark": "^5.5.2",
     "gatsby-transformer-sharp": "^4.4.0",
@@ -41,7 +44,9 @@
     "react-dom": "^17.0.1",
     "react-helmet": "^6.1.0",
     "typeface-merriweather": "0.0.72",
-    "typeface-montserrat": "0.0.75"
+    "typeface-montserrat": "0.0.75",
+    "typography": "^0.16.21",
+    "typography-theme-github": "^0.16.19"
   },
   "devDependencies": {
     "prettier": "^2.5.1"
