@@ -11,7 +11,7 @@
   --maxWidth-3xl: 48rem;
   --maxWidth-4xl: 56rem;
   --maxWidth-full: "100%";
-  --maxWidth-wrapper: var(--maxWidth-3xl);
+  --maxWidth-wrapper: var(--maxWidth-4xl);
   --spacing-px: "1px";
   --spacing-0: 0;
   --spacing-1: 0.25rem;
@@ -43,7 +43,7 @@
   --fontWeight-bold: 700;
   --fontWeight-extrabold: 800;
   --fontWeight-black: 900;
-  --fontSize-root: 16px;
+  --fontSize-root: 15px;
   --lineHeight-none: 1;
   --lineHeight-tight: 1.1;
   --lineHeight-normal: 1.5;
@@ -122,7 +122,7 @@ h6 {
 
 h1 {
   font-weight: var(--fontWeight-black);
-  font-size: var(--fontSize-6);
+  font-size: var(--fontSize-5);
   color: var(--color-heading-black);
 }
 
@@ -363,4 +363,25 @@ a:focus {
 
 .post-tags a {
   margin-right: var(--spacing-2);
+}
+
+.gatsby-code-title {
+    background: #666;
+    color: var(--color-accent);
+    margin: 24px 0px -12px;
+    padding: 6px 12px;
+    font-size: var(--fontSize-0);
+    line-height: 1;
+    font-weight: bold;
+    border-radius: 4px 4px 0 0;
+}
+
+.gatsby-highlight-code-line {
+    background-color: #345;
+    display: block;
+    margin-right: -1em;
+    margin-left: -16px;
+    padding-right: 1em;
+    padding-left: 10px;
+    border-left: 8px solid var(--color-accent);
 }

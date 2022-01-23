@@ -18,7 +18,7 @@ graph LR
 install[Install Plugin]
 install --> configure[Configure Plugin]
 configure --> draw[Draw Fancy Diagrams]
-user[fas:fa-users user] -- edit --> folder[:smiles: test]
+user[fas:fa-users user] -- edit --> folder[てすとtest]
 ```
 
 ## mermaid.jsのテスト2
@@ -34,4 +34,13 @@ sequenceDiagram
     else 失敗
         ふが ->> ほげ: failure
     end
+```
+
+## sandbox
+
+[google](https://google.com)
+
+```python{1}:title=test.py
+import pandas as pd
+df =  pd.read_csv('test.csv')
 ```
