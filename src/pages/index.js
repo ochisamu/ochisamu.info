@@ -54,13 +54,13 @@ const BlogIndex = ({ data, location }) => {
                   </div>
                   <div className="post-tags">
                     <small>
-                        {post.frontmatter.tags.map(tag => {
-                            return <span>
-                                <Link to={`/tags/${_.kebabCase(tag)}/`}>
-                                    <FontAwesomeIcon icon={faHashtag} />{tag}
-                                </Link>{` `}
-                            </span>
-                        })}
+                      {post.frontmatter.tags.map(tag => {
+                        return <span>
+                          <Link to={`/tags/${_.kebabCase(tag)}/`}>
+                            <FontAwesomeIcon icon={faHashtag} />{tag}
+                          </Link>{` `}
+                        </span>
+                      })}
                     </small>
                   </div>
                 </header>

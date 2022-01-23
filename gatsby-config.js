@@ -34,6 +34,20 @@ module.exports = {
       resolve: `gatsby-transformer-remark`,
       options: {
         plugins: [
+          `gatsby-plugin-material-ui`,
+          {
+            resolve: `gatsby-remark-table-of-contents`,
+            options: {
+              exclude: "目次",
+              tight: false,
+              ordered: true,
+              fromHeading: 1,
+              toHeading: 2,
+              className: "toc"
+            },
+          },
+          `gatsby-remark-mermaid`,
+          `gatsby-remark-autolink-headers`,
           {
             resolve: `gatsby-remark-images`,
             options: {
@@ -46,6 +60,7 @@ module.exports = {
               wrapperStyle: `margin-bottom: 1.0725rem`,
             },
           },
+          `gatsby-remark-code-titles`,
           `gatsby-remark-prismjs`,
           {
             resolve: `gatsby-remark-prismjs`,
@@ -59,6 +74,13 @@ module.exports = {
           },
           `gatsby-remark-copy-linked-files`,
           `gatsby-remark-smartypants`,
+          {
+            resolve: 'gatsby-remark-external-links',
+            options: {
+              target: '_blank',
+              rel: 'noopener',
+            },
+          },
         ],
       },
     },
@@ -150,25 +172,5 @@ module.exports = {
     // this (optional) plugin enables Progressive Web App + Offline functionality
     // To learn more, visit: https://gatsby.dev/offline
     // `gatsby-plugin-offline`,
-    {
-      resolve: 'gatsby-transformer-remark',
-      options: {
-        plugins: [
-          {
-            resolve: `gatsby-remark-table-of-contents`,
-            options: {
-              exclude: "目次",
-              tight: false,
-              ordered: true,
-              fromHeading: 1,
-              toHeading: 2,
-              className: "toc"
-            },
-          },
-          `gatsby-remark-mermaid`,
-          `gatsby-remark-autolink-headers`,
-        ]
-      }
-    },
   ],
 }
