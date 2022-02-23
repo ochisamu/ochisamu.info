@@ -3,7 +3,7 @@ module.exports = {
     title: `ochisamu.info`,
     author: {
       name: `ochisamu`,
-      summary: `技術メモ`,
+      summary: `技術メモ(作成中)`,
     },
     description: `ネットワーク/サーバ/機械学習についての備忘録`,
     siteUrl: `https://ochisamu.info/`,
@@ -58,6 +58,14 @@ module.exports = {
             resolve: `gatsby-remark-responsive-iframe`,
             options: {
               wrapperStyle: `margin-bottom: 1.0725rem`,
+            },
+          },
+          {
+            resolve: 'gatsby-remark-code-buttons',
+            options: {
+              tooltipText: `Copy to clipboard`,
+              toasterText: "Copied to clipboard",
+              toasterDuration: 5000,
             },
           },
           `gatsby-remark-code-titles`,

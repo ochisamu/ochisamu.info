@@ -27,6 +27,7 @@
   --spacing-20: 5rem;
   --spacing-24: 6rem;
   --spacing-32: 8rem;
+  --spacing-64: 16rem;
   --fontFamily-sans: 'Noto Sans JP', sans-serif;
 /*
   --fontFamily-sans: 'Noto Sans JP', Montserrat, system-ui, -apple-system, BlinkMacSystemFont,
@@ -57,7 +58,8 @@
   --fontSize-5: 2.074rem;
   --fontSize-6: 2.488rem;
   --fontSize-7: 2.986rem;
-  --color-primary: #005b99;
+  /* --color-primary: #005b99; */
+  --color-primary: #993366;
   --color-text: #2e353f;
   --color-text-light: #4f5969;
   --color-heading: #1a202c;
@@ -272,7 +274,7 @@ a:focus {
 }
 
 .post-list-item h2 {
-  font-size: var(--fontSize-4);
+  font-size: var(--fontSize-3);
   color: var(--color-primary);
   margin-bottom: var(--spacing-2);
   margin-top: var(--spacing-0);
@@ -280,6 +282,8 @@ a:focus {
 
 .post-list-item header {
   margin-bottom: var(--spacing-4);
+  display: flex;
+  flex-direction: column;
 }
 
 .header-link-home {
@@ -384,4 +388,70 @@ a:focus {
     padding-right: 1em;
     padding-left: 10px;
     border-left: 8px solid var(--color-accent);
+}
+
+.gatsby-code-button-container {
+  touch-action: none;
+  display: flex;
+  justify-content: flex-end;
+  position: relative;
+  top: 42px;
+  right: 5px;
+  z-index: 100;
+  pointer-events: none;
+}
+
+.gatsby-code-button-icon {
+  display: block;
+  width: 14px;
+  height: 14px;
+  fill: var(--color-accent);
+}
+
+.eyecatch {
+  width: 100vm;
+  min-height: 15rem;
+  display: flex;
+  justify-content:center;
+  align-items: center;
+  padding: var(--spacing-2);
+  background-color: #fce4ec;
+  margin-bottom: var(--spacing-10);
+  text-align: center;
+  font-size: 8rem;
+  border-radius: 1rem;
+}
+
+.eyecatch-index {
+  width: 17vm;
+  height: 17vm;
+  display: flex;
+  justify-content:center;
+  align-items: center;
+  text-align: center;
+  background-color: #fce4ec;
+  padding: var(--spacing-4);
+  margin-right: var(--spacing-4);
+  font-size: 2.5rem;
+  border-radius: 0.5rem;
+  float: left;
+}
+
+.post-date {
+  margin-bottom: var(--spacing-2);
+}
+.post-tag {
+  border-radius: 0.5rem;
+  margin-right: var(--spacing-2);
+  padding:  0 var(--spacing-2);
+  /* background-color: #f8bbd0; */
+  background-color: #fff;
+  border: 0.1rem solid #666;
+}
+.post-tag a {
+  text-decoration: none;
+  color: #333;
+}
+.post-tag:hover {
+  background-color: #ccc;
 }

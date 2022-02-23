@@ -5,6 +5,7 @@ import _ from "lodash"
 import Bio from "../components/bio"
 import Layout from "../components/layout"
 import Seo from "../components/seo"
+import EyeCatch from "../components/eyecatch"
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faClock } from "@fortawesome/free-regular-svg-icons"
@@ -27,15 +28,16 @@ const BlogPostTemplate = ({ data, location }) => {
         itemType="http://schema.org/Article"
       >
         <header>
+          <EyeCatch type="blog-post" tags={post.frontmatter.tags}/>
           <h1 itemProp="headline">{post.frontmatter.title}</h1>
           <p>
             <div className="post-date">
               <FontAwesomeIcon icon={faClock} /> {post.frontmatter.date}
             </div>
-            <div className="post-tags">
+            <div className="post-tags-list">
               <small>
                 {post.frontmatter.tags.map(tag => {
-                  return <span>
+                  return <span className="post-tag">
                     <Link to={`/tags/${_.kebabCase(tag)}/`}>
                       <FontAwesomeIcon icon={faHashtag} />{tag}
                     </Link>{` `}
