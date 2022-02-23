@@ -33,6 +33,7 @@
     "gatsby-plugin-sitemap": "^5.4.0",
     "gatsby-plugin-typography": "^4.5.0",
     "gatsby-remark-autolink-headers": "^5.5.0",
+    "gatsby-remark-code-buttons": "^2.0.7",
     "gatsby-remark-code-titles": "^1.1.0",
     "gatsby-remark-copy-linked-files": "^5.4.0",
     "gatsby-remark-external-links": "^0.0.4",

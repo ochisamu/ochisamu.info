@@ -1,7 +1,7 @@
 ---
 title: はじめに
 date: "2021-01-09"
-tags: ["Gatsby", "ToDo", "test"]
+tags: ["ToDo", "test"]
 ---
 
 ```toc
@@ -9,7 +9,7 @@ tags: ["Gatsby", "ToDo", "test"]
 
 ## 概要
 
-これから技術メモを投稿する予定
+これから技術メモを投稿していく予定
 
 ## ToDo
 
