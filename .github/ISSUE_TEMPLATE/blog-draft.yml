@@ -1,0 +1,40 @@
+# .github/ISSUE_TEMPLATE/tech-clip.yml
+name: Tech Clip
+description: 読んだ技術記事への一言メモ
+title: "[clip] "
+labels: ["tech-clip"]
+body:
+  - type: input
+    id: url
+    attributes:
+      label: URL
+      description: 読んだ記事のURL
+      placeholder: "https://..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: comment
+    attributes:
+      label: ひとことコメント
+      description: 思ったことを短く。箇条書きでもOK。
+      placeholder: "この設計、AIチャットの会話履歴管理にも使えそう。"
+    validations:
+      required: true
+
+  - type: input
+    id: tags
+    attributes:
+      label: タグ
+      placeholder: "AI, Astro, LangGraph, Keyboard"
+
+  - type: dropdown
+    id: importance
+    attributes:
+      label: 扱い
+      options:
+        - 週次まとめに入れる
+        - あとで深掘りしたい
+        - 単なるメモ
+    validations:
+      required: true

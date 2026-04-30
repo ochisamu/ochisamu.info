@@ -1,0 +1,52 @@
+# .github/workflows/weekly-tech-clips.yml
+name: Weekly Tech Clips
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 10 * * 0" # Sun 23:00 JST
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Generate weekly tech clips article
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_MODEL: gpt-5.4-mini
+        run: node scripts/generate-weekly-tech-clips.mjs
+
+      - name: Create Pull Request
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if git diff --quiet; then
+            echo "No changes"
+            exit 0
+          fi
+
+          BRANCH="weekly-tech-clips-${GITHUB_RUN_ID}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git checkout -b "$BRANCH"
+          git add src/content/blog
+          git commit -m "Add weekly tech clips"
+          git push origin "$BRANCH"
+
+          gh pr create \
+            --title "Weekly Tech Clips" \
+            --body "スマホから保存した tech-clip Issue をもとに週次まとめ記事を生成しました。"
