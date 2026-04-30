@@ -22,13 +22,27 @@ jobs:
         with:
           node-version: 22
 
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          cache-dependency-glob: requirements-weekly-tech-clips.txt
+
+      - name: Install weekly tech clips dependencies
+        run: |
+          uv venv .venv --python 3.12
+          uv pip install --python .venv/bin/python -r requirements-weekly-tech-clips.txt
+
       - name: Generate weekly tech clips article
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           OPENAI_MODEL: gpt-5.4-mini
           OPENAI_WEB_SEARCH: "true"
-        run: node scripts/generate-weekly-tech-clips.mjs
+        run: .venv/bin/python scripts/generate-weekly-tech-clips.py
 
       - name: Create Pull Request
         env:

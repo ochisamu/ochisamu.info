@@ -35,6 +35,21 @@ build/Release
 # Dependency directories
 node_modules/
 jspm_packages/
+.venv/
+venv/
+env/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+build/
+*.egg-info/
 
 # Typescript v1 declaration files
 typings/

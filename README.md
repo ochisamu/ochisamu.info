@@ -31,10 +31,12 @@ tags: ["tag"]
 `tech-clip` ラベル付きの Issue から週次まとめ記事を生成します。
 
 ```sh
-GITHUB_TOKEN=... OPENAI_API_KEY=... node scripts/generate-weekly-tech-clips.mjs
+uv venv .venv --python 3.12
+uv pip install --python .venv/bin/python -r requirements-weekly-tech-clips.txt
+GITHUB_TOKEN=... OPENAI_API_KEY=... .venv/bin/python scripts/generate-weekly-tech-clips.py
 ```
 
-スクリプト側で Issue 内の URL を取得し、タイトル・説明・本文抜粋を LLM に渡します。OpenAI の Web search tool はデフォルトで有効です。無効にする場合は `OPENAI_WEB_SEARCH=false` を指定します。
+スクリプト側で Issue 内の URL を取得し、DeepAgents の `article-reader` subagent が各記事を読んでから、editor agent が週次まとめに統合します。OpenAI の Web search tool はデフォルトで有効です。無効にする場合は `OPENAI_WEB_SEARCH=false` を指定します。
 
 ## Deploy
 
