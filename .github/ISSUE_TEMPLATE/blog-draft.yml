@@ -1,4 +1,3 @@
-# .github/ISSUE_TEMPLATE/tech-clip.yml
 name: Tech Clip
 description: 読んだ技術記事への一言メモ
 title: "[clip] "
@@ -8,7 +7,7 @@ body:
     id: url
     attributes:
       label: URL
-      description: 読んだ記事のURL
+      description: 読んだ記事の URL
       placeholder: "https://..."
     validations:
       required: true
@@ -17,7 +16,7 @@ body:
     id: comment
     attributes:
       label: ひとことコメント
-      description: 思ったことを短く。箇条書きでもOK。
+      description: 思ったことを短く。箇条書きでも OK。
       placeholder: "この設計、AIチャットの会話履歴管理にも使えそう。"
     validations:
       required: true
@@ -26,34 +25,7 @@ body:
     id: tags
     attributes:
       label: タグ
-            - name: Create Pull Request
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          git status --short
-
-          if [ -z "$(git status --porcelain)" ]; then
-            echo "No changes"
-            exit 0
-          fi
-
-          BRANCH="weekly-tech-clips-${GITHUB_RUN_ID}"
-
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
-          git checkout -b "$BRANCH"
-          git add src/content/blog
-          git status --short
-
-          git commit -m "Add weekly tech clips"
-          git push origin "$BRANCH"
-
-          gh pr create \
-            --base master \
-            --head "$BRANCH" \
-            --title "Weekly Tech Clips ${GITHUB_RUN_ID}" \
-            --body "スマホから保存した tech-clip Issue をもとに週次まとめ記事を生成しました。"
+      description: 任意。カンマ区切り
       placeholder: "AI, Astro, LangGraph, Keyboard"
 
   - type: dropdown
