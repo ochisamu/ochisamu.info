@@ -9,6 +9,15 @@ const model = process.env.OPENAI_MODEL ?? "gpt-5.4-mini";
 
 const SOURCE_LABEL = "tech-clip";
 
+// 1記事あたりAIに渡す本文テキストの最大文字数
+const ARTICLE_TEXT_LIMIT = Number(process.env.ARTICLE_TEXT_LIMIT ?? 6000);
+
+// 全クリップ合計でAIに渡す本文テキストの最大文字数
+// 週に大量クリップしたときのトークン爆発を防ぐ
+const TOTAL_ARTICLE_TEXT_LIMIT = Number(
+  process.env.TOTAL_ARTICLE_TEXT_LIMIT ?? 24000
+);
+
 if (!githubToken) throw new Error("GITHUB_TOKEN is required");
 if (!openaiApiKey) throw new Error("OPENAI_API_KEY is required");
 
@@ -34,7 +43,7 @@ function getJstDateParts() {
   };
 }
 
-const { yyyy, mm, dd, date } = getJstDateParts();
+const { yyyy, date } = getJstDateParts();
 
 async function github(pathname, options = {}) {
   const res = await fetch(`https://api.github.com${pathname}`, {
@@ -71,9 +80,6 @@ function escapeRegExp(value) {
  *
  * ## コメント
  * ...
- *
- * ### ひとことコメント
- * ...
  */
 function extractSection(body, headings) {
   const normalizedBody = body.replace(/\r\n/g, "\n");
@@ -92,15 +98,7 @@ function extractSection(body, headings) {
     }
   }
 
-  /**
-   * 念のため、Markdown見出しになっていない場合も拾う。
-   *
-   * URL
-   * https://...
-   *
-   * コメント
-   * ...
-   */
+  // 念のため、Markdown見出しではないプレーンな形式も拾う
   for (const heading of headings) {
     const escaped = escapeRegExp(heading);
 
@@ -127,67 +125,259 @@ function cleanExtractedValue(value) {
 
 function normalizeUrl(value) {
   const text = cleanExtractedValue(value);
-
   const match = text.match(/https?:\/\/[^\s)>\]]+/);
   return match?.[0]?.trim() ?? "";
 }
 
-async function fetchTitle(url) {
+function decodeHtml(value = "") {
+  return value
+    .replace(/&nbsp;/g, " ")
+    .replace(/&amp;/g, "&")
+    .replace(/&quot;/g, '"')
+    .replace(/&#34;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&apos;/g, "'")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&#x([0-9a-fA-F]+);/g, (_, hex) =>
+      String.fromCodePoint(Number.parseInt(hex, 16))
+    )
+    .replace(/&#([0-9]+);/g, (_, num) =>
+      String.fromCodePoint(Number.parseInt(num, 10))
+    );
+}
+
+function getAttributeValue(tag, attrName) {
+  const regex = new RegExp(
+    `${attrName}\\s*=\\s*["']([^"']*)["']|${attrName}\\s*=\\s*([^\\s>]+)`,
+    "i"
+  );
+  const match = tag.match(regex);
+  return decodeHtml(match?.[1] ?? match?.[2] ?? "").trim();
+}
+
+function getMetaContent(html, names) {
+  const metaTags = html.match(/<meta\b[^>]*>/gi) ?? [];
+
+  for (const tag of metaTags) {
+    const name = getAttributeValue(tag, "name").toLowerCase();
+    const property = getAttributeValue(tag, "property").toLowerCase();
+    const itemprop = getAttributeValue(tag, "itemprop").toLowerCase();
+
+    const matched = names.some((target) => {
+      const normalized = target.toLowerCase();
+      return (
+        name === normalized ||
+        property === normalized ||
+        itemprop === normalized
+      );
+    });
+
+    if (matched) {
+      const content = getAttributeValue(tag, "content");
+      if (content) return content;
+    }
+  }
+
+  return "";
+}
+
+function extractTitle(html, fallbackUrl) {
+  const ogTitle = getMetaContent(html, [
+    "og:title",
+    "twitter:title",
+    "headline",
+  ]);
+
+  if (ogTitle) {
+    return ogTitle.replace(/\s+/g, " ").trim();
+  }
+
+  const title = html.match(/<title[^>]*>([\s\S]*?)<\/title>/i)?.[1];
+
+  return decodeHtml(title?.replace(/\s+/g, " ").trim() ?? fallbackUrl);
+}
+
+function extractDescription(html) {
+  const description = getMetaContent(html, [
+    "description",
+    "og:description",
+    "twitter:description",
+  ]);
+
+  return description.replace(/\s+/g, " ").trim();
+}
+
+function stripHtmlToText(html) {
+  const withoutNoise = html
+    .replace(/<script\b[\s\S]*?<\/script>/gi, " ")
+    .replace(/<style\b[\s\S]*?<\/style>/gi, " ")
+    .replace(/<noscript\b[\s\S]*?<\/noscript>/gi, " ")
+    .replace(/<svg\b[\s\S]*?<\/svg>/gi, " ")
+    .replace(/<iframe\b[\s\S]*?<\/iframe>/gi, " ")
+    .replace(/<!--[\s\S]*?-->/g, " ");
+
+  const withBreaks = withoutNoise
+    .replace(/<br\s*\/?>/gi, "\n")
+    .replace(/<\/(p|div|section|article|main|header|footer|h[1-6]|li|ul|ol|pre|blockquote|table|tr)>/gi, "\n")
+    .replace(/<li\b[^>]*>/gi, "- ");
+
+  const text = decodeHtml(withBreaks.replace(/<[^>]+>/g, " "));
+
+  return text
+    .split("\n")
+    .map((line) => line.replace(/[ \t]+/g, " ").trim())
+    .filter(Boolean)
+    .join("\n")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+}
+
+function extractBetweenTag(html, tagName) {
+  const regex = new RegExp(`<${tagName}\\b[^>]*>([\\s\\S]*?)<\\/${tagName}>`, "gi");
+  const matches = [...html.matchAll(regex)].map((match) => match[1]);
+  return matches;
+}
+
+function extractArticleLikeBlocks(html) {
+  const blocks = [];
+
+  // article/main はまず強く見る
+  for (const tagName of ["article", "main"]) {
+    for (const block of extractBetweenTag(html, tagName)) {
+      blocks.push(block);
+    }
+  }
+
+  // class/idに記事本文っぽい名前が含まれるdiv/sectionも拾う
+  const articleClassRegex =
+    /<(div|section)\b[^>]*(?:class|id)=["'][^"']*(?:article|entry|post|content|body|markdown|zenn|qiita)[^"']*["'][^>]*>([\s\S]*?)<\/\1>/gi;
+
+  for (const match of html.matchAll(articleClassRegex)) {
+    blocks.push(match[2]);
+  }
+
+  return blocks;
+}
+
+function extractArticleText(html) {
+  const candidates = extractArticleLikeBlocks(html)
+    .map(stripHtmlToText)
+    .filter((text) => text.length >= 200);
+
+  if (candidates.length > 0) {
+    candidates.sort((a, b) => b.length - a.length);
+    return candidates[0];
+  }
+
+  // fallback: body全体から抽出
+  const body =
+    html.match(/<body\b[^>]*>([\s\S]*?)<\/body>/i)?.[1] ?? html;
+
+  return stripHtmlToText(body);
+}
+
+function truncateText(text, maxLength) {
+  const clean = text.trim();
+
+  if (clean.length <= maxLength) {
+    return clean;
+  }
+
+  const sliced = clean.slice(0, maxLength);
+  const boundaries = [
+    sliced.lastIndexOf("\n\n"),
+    sliced.lastIndexOf("。"),
+    sliced.lastIndexOf(". "),
+    sliced.lastIndexOf("\n"),
+  ];
+
+  const boundary = Math.max(...boundaries);
+  const safeCut = boundary > maxLength * 0.6 ? boundary + 1 : maxLength;
+
+  return `${sliced.slice(0, safeCut).trim()}\n\n...[本文は長いため途中まで]`;
+}
+
+async function fetchPageContext(url) {
   try {
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 8000);
+    const timeout = setTimeout(() => controller.abort(), 12000);
 
     const res = await fetch(url, {
       signal: controller.signal,
+      redirect: "follow",
       headers: {
-        "User-Agent": "ochisamu-info-tech-clip-bot/1.0",
+        "User-Agent": "clip-bot/1.0",
+        Accept:
+          "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
       },
     });
 
     clearTimeout(timeout);
 
     if (!res.ok) {
-      console.log(`Failed to fetch title: ${res.status} ${url}`);
-      return url;
+      console.log(`Failed to fetch page: ${res.status} ${url}`);
+      return {
+        title: url,
+        description: "",
+        articleText: "",
+        fetchStatus: `failed:${res.status}`,
+      };
+    }
+
+    const contentType = res.headers.get("content-type") ?? "";
+
+    if (!contentType.includes("text/html")) {
+      console.log(`Skipped non-HTML page: ${contentType} ${url}`);
+      return {
+        title: url,
+        description: "",
+        articleText: "",
+        fetchStatus: `non-html:${contentType}`,
+      };
     }
 
     const html = await res.text();
 
-    const ogTitle =
-      html.match(
-        /<meta\s+(?:property|name)=["']og:title["']\s+content=["']([^"']+)["'][^>]*>/i
-      )?.[1] ??
-      html.match(
-        /<meta\s+content=["']([^"']+)["']\s+(?:property|name)=["']og:title["'][^>]*>/i
-      )?.[1];
+    const title = extractTitle(html, url);
+    const description = extractDescription(html);
+    const articleText = truncateText(extractArticleText(html), ARTICLE_TEXT_LIMIT);
 
-    const title =
-      ogTitle ?? html.match(/<title[^>]*>([\s\S]*?)<\/title>/i)?.[1];
-
-    return decodeHtml(title?.replace(/\s+/g, " ").trim() ?? url);
+    return {
+      title,
+      description,
+      articleText,
+      fetchStatus: "ok",
+    };
   } catch (error) {
-    console.log(`Failed to fetch title: ${url}`);
+    console.log(`Failed to fetch page: ${url}`);
     console.log(error instanceof Error ? error.message : String(error));
-    return url;
+
+    return {
+      title: url,
+      description: "",
+      articleText: "",
+      fetchStatus: "error",
+    };
   }
 }
 
-function decodeHtml(value) {
-  return value
-    .replace(/&amp;/g, "&")
-    .replace(/&quot;/g, '"')
-    .replace(/&#39;/g, "'")
-    .replace(/&lt;/g, "<")
-    .replace(/&gt;/g, ">");
-}
+function limitTotalArticleText(clips) {
+  let remaining = TOTAL_ARTICLE_TEXT_LIMIT;
 
-function slugify(value) {
-  return value
-    .toLowerCase()
-    .normalize("NFKD")
-    .replace(/[^\p{Letter}\p{Number}]+/gu, "-")
-    .replace(/^-+|-+$/g, "")
-    .slice(0, 80);
+  return clips.map((clip) => {
+    const articleText =
+      remaining > 0
+        ? truncateText(clip.articleText ?? "", Math.min(ARTICLE_TEXT_LIMIT, remaining))
+        : "";
+
+    remaining -= articleText.length;
+
+    return {
+      ...clip,
+      articleText,
+    };
+  });
 }
 
 function getOutputDir() {
@@ -208,7 +398,11 @@ function getOpenAIText(responseJson) {
 
   const text = responseJson.output
     ?.flatMap((item) => item.content ?? [])
-    ?.map((content) => content.text ?? "")
+    ?.map((content) => {
+      if (typeof content.text === "string") return content.text;
+      if (typeof content.output_text === "string") return content.output_text;
+      return "";
+    })
     ?.join("\n")
     ?.trim();
 
@@ -264,13 +458,21 @@ async function main() {
       continue;
     }
 
-    const title = await fetchTitle(url);
+    const page = await fetchPageContext(url);
+
+    console.log(`Fetched page title: ${page.title}`);
+    console.log(`Description length: ${page.description.length}`);
+    console.log(`Article text length: ${page.articleText.length}`);
+    console.log(`Fetch status: ${page.fetchStatus}`);
 
     clips.push({
       number: issue.number,
       issueUrl: issue.html_url,
       url,
-      title,
+      title: page.title,
+      description: page.description,
+      articleText: page.articleText,
+      fetchStatus: page.fetchStatus,
       comment,
       createdAt,
     });
@@ -284,25 +486,34 @@ async function main() {
     process.exit(0);
   }
 
+  const clipsForPrompt = limitTotalArticleText(clips);
+
   const prompt = `
 あなたは個人技術ブログ「ochisamu.info」の編集者です。
 以下の技術記事クリップをもとに、週次まとめ記事をMarkdownで作ってください。
 
+この記事の目的:
+- 元記事の完全な要約ではなく、ユーザーが読んだ技術記事への「ひとこと反応ログ」をブログとして自然に整える
+- ユーザーのコメントを主役にする
+- 記事本文は文脈理解の補助として使う
+
 方針:
 - 日本語で書く
 - 個人ブログらしい自然な技術メモ調にする
-- ユーザーの「コメント」を主役にする
 - 各クリップは「元記事」「ひとこと」「考えたこと」の構成にする
 - 元記事のURLはMarkdownリンクにする
-- 事実の断定を盛りすぎない
-- 記事タイトルから推測できる範囲を超えて、内容を勝手に詳述しすぎない
-- 「気になった」「試してみたい」くらいの温度感はそのまま活かす
+- ユーザーコメントの温度感を活かす
+- 記事本文に書かれていないことを断定しない
+- 断定しづらい場合は「〜そう」「〜かもしれない」「気になった」くらいの表現にする
+- 記事本文を長く引用しない
+- 原文の文章をそのまま大量に転載しない
+- 1クリップあたりの「考えたこと」は短めでよい
 - 最後に「今週の所感」を入れる
 - frontmatterは不要。本文だけ返す
 - Markdown以外の説明文は返さない
 
 クリップ:
-${JSON.stringify(clips, null, 2)}
+${JSON.stringify(clipsForPrompt, null, 2)}
 `.trim();
 
   const aiRes = await fetch("https://api.openai.com/v1/responses", {
