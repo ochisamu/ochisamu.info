@@ -1,4 +1,6 @@
 .cache
-package.json
+.vscode
 package-lock.json
-public
+.astro
+dist
+.wrangler

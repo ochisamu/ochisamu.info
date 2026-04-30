@@ -1,0 +1,93 @@
+---
+import { getCollection, render } from "astro:content"
+import Base from "../layouts/Base.astro"
+import Bio from "../components/Bio.astro"
+import EyeCatch from "../components/EyeCatch.astro"
+import PostMeta from "../components/PostMeta.astro"
+import { byDateAsc, postHref, postSlug } from "../utils"
+
+export async function getStaticPaths() {
+  const posts = (await getCollection("blog")).sort(byDateAsc)
+  return posts.map((post, index) => ({
+    params: { slug: postSlug(post) },
+    props: {
+      post,
+      previous: posts[index - 1] ?? null,
+      next: posts[index + 1] ?? null,
+    },
+  }))
+}
+
+const { post, previous, next } = Astro.props
+const { Content } = await render(post)
+---
+
+<Base title={post.data.title} description={post.data.description}>
+  <article
+    class="mx-auto max-w-3xl"
+    itemscope
+    itemtype="http://schema.org/Article"
+  >
+    <header
+      class="mb-8 rounded-3xl bg-white p-4 shadow-2xl shadow-slate-950/10 ring-1 ring-slate-200 sm:p-5"
+    >
+      <EyeCatch type="post" tags={post.data.tags} />
+      <div class="px-1 pt-6 sm:px-3 sm:pt-7">
+        <h1
+          class="mb-5 text-balance text-4xl font-black leading-tight tracking-normal text-slate-950 sm:text-5xl"
+          itemprop="headline"
+        >
+          {post.data.title}
+        </h1>
+        <PostMeta date={post.data.date} tags={post.data.tags} />
+      </div>
+    </header>
+    <section
+      class="article-body rounded-3xl bg-white px-5 py-8 shadow-2xl shadow-slate-950/10 ring-1 ring-slate-200 sm:px-8 md:px-10"
+      itemprop="articleBody"
+    >
+      <Content />
+    </section>
+    <hr />
+    <footer>
+      <Bio />
+    </footer>
+  </article>
+  {
+    (previous || next) && (
+      <nav class="mx-auto max-w-3xl" aria-label="記事ナビゲーション">
+        <ul class="grid list-none gap-3 p-0 sm:grid-cols-2">
+          {previous && (
+            <li>
+              <a href={postHref(previous)} rel="prev">
+                ← {previous.data.title}
+              </a>
+            </li>
+          )}
+          {next && (
+            <li class={previous ? "" : "sm:col-start-2"}>
+              <a href={postHref(next)} rel="next">
+                {next.data.title} →
+              </a>
+            </li>
+          )}
+        </ul>
+      </nav>
+    )
+  }
+  <div class="mx-auto mt-6 max-w-3xl">
+    <a
+      class="inline-flex min-h-11 items-center rounded-full border border-slate-200 bg-white px-4 text-sm font-black text-slate-700 no-underline shadow-sm transition hover:border-rose-200 hover:text-rose-700 hover:shadow-lg"
+      href="/">記事一覧へ戻る</a
+    >
+  </div>
+  <script>
+    const diagrams = document.querySelectorAll(".mermaid")
+
+    if (diagrams.length > 0) {
+      import("mermaid").then(({ default: mermaid }) => {
+        mermaid.initialize({ startOnLoad: true })
+      })
+    }
+  </script>
+</Base>

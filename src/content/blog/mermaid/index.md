@@ -7,6 +7,7 @@ tags: ["Gatsby", "mermaid-js", "test"]
 ## 目次
 
 ```toc
+
 ```
 
 ## mermaid.jsのテスト1
@@ -28,7 +29,7 @@ user[fas:fa-users user] -- edit --> folder[てすとtest]
 ```mermaid
 sequenceDiagram
     ほげ ->> ふが: test
-    ふが ->> ふが: 
+    ふが ->> ふが:
     alt 実行成功
         ふが ->> ほげ: success
     else 失敗

@@ -1,0 +1,29 @@
+---
+import { getCollection } from "astro:content"
+import Base from "../layouts/Base.astro"
+import Bio from "../components/Bio.astro"
+import PostList from "../components/PostList.astro"
+import { byDateDesc } from "../utils"
+
+const posts = (await getCollection("blog")).sort(byDateDesc)
+---
+
+<Base title="All posts">
+  <section class="mb-10 max-w-4xl py-5 text-white">
+    <p
+      class="mb-4 text-xs font-black uppercase tracking-[0.18em] text-teal-200"
+    >
+      Tech notes
+    </p>
+    <h1
+      class="mb-5 text-balance text-4xl font-black leading-tight tracking-normal sm:text-6xl"
+    >
+      ネットワーク、サーバ、機械学習のメモ
+    </h1>
+    <p class="max-w-2xl text-lg leading-8 text-slate-300">
+      検証ログや設定メモを、あとから読み返しやすい形で残しています。
+    </p>
+  </section>
+  <Bio />
+  <PostList posts={posts} />
+</Base>

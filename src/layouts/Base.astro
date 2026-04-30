@@ -1,0 +1,157 @@
+---
+import "@fontsource/noto-sans-jp"
+import "../styles/global.css"
+import { site } from "../site"
+
+interface Props {
+  title?: string
+  description?: string
+}
+
+const title = Astro.props.title
+  ? `${Astro.props.title} | ${site.title}`
+  : site.title
+const description = Astro.props.description ?? site.description
+const isHome = Astro.url.pathname === "/"
+---
+
+<!doctype html>
+<html lang="ja" class="scroll-smooth">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:creator" content={`@${site.social.twitter}`} />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <link rel="icon" href="/favicon.ico" />
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title={site.title}
+      href="/rss.xml"
+    />
+    <title>{title}</title>
+  </head>
+  <body
+    class="min-h-screen overflow-x-hidden bg-slate-50 text-slate-950 antialiased selection:bg-rose-300 selection:text-slate-950"
+  >
+    <a
+      class="sr-only focus:not-sr-only focus:fixed focus:left-3 focus:top-3 focus:z-50 focus:rounded-full focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-black focus:text-slate-950 focus:no-underline focus:shadow-xl"
+      href="#main-content">本文へ移動</a
+    >
+    <div
+      class="fixed inset-0 -z-10 bg-[radial-gradient(circle_at_top_left,rgba(20,184,166,0.18),transparent_30rem),radial-gradient(circle_at_80%_10%,rgba(244,63,94,0.18),transparent_28rem),linear-gradient(180deg,#020617_0%,#0f172a_28rem,#f8fafc_28rem,#f8fafc_100%)]"
+    >
+    </div>
+    <header
+      class="sticky top-0 z-20 border-b border-white/10 bg-slate-950/75 backdrop-blur-xl"
+    >
+      <div
+        class="mx-auto flex min-h-16 max-w-6xl items-center justify-between gap-4 px-3"
+      >
+        <a
+          class="inline-flex items-center gap-3 text-lg font-black tracking-normal text-white no-underline sm:text-xl"
+          href="/"
+          aria-label={site.title}
+        >
+          <span
+            class="grid size-10 place-items-center rounded-xl bg-white text-slate-950 shadow-lg shadow-teal-500/10"
+          >
+            <svg
+              class="size-6 fill-none stroke-current stroke-[2.2]"
+              aria-hidden="true"
+              viewBox="0 0 24 24"
+            >
+              <path d="M6 5h12v14H6z"></path>
+              <path d="M9 9h6M9 13h4"></path>
+            </svg>
+          </span>
+          <span>{site.title}</span>
+        </a>
+        <nav class="flex items-center gap-1" aria-label="Primary">
+          <a
+            class:list={[
+              "rounded-full px-3 py-2 text-sm font-bold no-underline transition hover:bg-white/10 hover:text-white",
+              isHome ? "bg-white text-slate-950" : "text-slate-300",
+            ]}
+            href="/"
+            aria-current={isHome ? "page" : undefined}>Articles</a
+          >
+          <a
+            class="rounded-full px-3 py-2 text-sm font-bold text-slate-300 no-underline transition hover:bg-white/10 hover:text-white max-[420px]:hidden"
+            href="/rss.xml">RSS</a
+          >
+        </nav>
+      </div>
+    </header>
+    <div
+      class="mx-auto max-w-6xl px-3 py-10 sm:py-14"
+      data-is-root-path={Astro.url.pathname === "/"}
+    >
+      <main id="main-content" tabindex="-1">
+        <slot />
+      </main>
+      <footer
+        class="mx-auto mt-16 flex max-w-3xl flex-wrap justify-between gap-3 border-t border-slate-200 pt-6 text-sm text-slate-500"
+      >
+        <span>© {new Date().getFullYear()} ochisamu</span>
+        <span>Built with <a href="https://astro.build">Astro</a></span>
+      </footer>
+    </div>
+    <script>
+      const enhanceCodeBlocks = () => {
+        document.querySelectorAll("pre.astro-code").forEach(pre => {
+          if (pre.parentElement?.classList.contains("code-block")) return
+
+          const title = pre.previousElementSibling?.classList.contains(
+            "code-title",
+          )
+            ? pre.previousElementSibling.textContent?.trim()
+            : ""
+          pre.previousElementSibling?.classList.contains("code-title") &&
+            pre.previousElementSibling.remove()
+
+          const wrapper = document.createElement("div")
+          wrapper.className = "code-block"
+
+          const toolbar = document.createElement("div")
+          toolbar.className = "code-toolbar"
+
+          const label = document.createElement("span")
+          label.className = "code-label"
+          label.textContent = title || pre.dataset.language || "code"
+
+          const button = document.createElement("button")
+          button.className = "code-copy"
+          button.type = "button"
+          button.setAttribute("aria-label", "Copy code")
+          button.textContent = "Copy"
+          button.addEventListener("click", async () => {
+            try {
+              await navigator.clipboard.writeText(pre.textContent || "")
+              button.textContent = "Copied"
+            } catch {
+              button.textContent = "Failed"
+            } finally {
+              window.setTimeout(() => {
+                button.textContent = "Copy"
+              }, 1400)
+            }
+          })
+
+          toolbar.append(label, button)
+          pre.replaceWith(wrapper)
+          wrapper.append(toolbar, pre)
+        })
+      }
+
+      enhanceCodeBlocks()
+      document.addEventListener("astro:page-load", enhanceCodeBlocks)
+    </script>
+  </body>
+</html>

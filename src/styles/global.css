@@ -1,0 +1,163 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans:
+    "Noto Sans JP", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+}
+
+@layer base {
+  a {
+    @apply text-rose-700 underline decoration-rose-300 underline-offset-4 transition hover:text-rose-900;
+  }
+
+  img {
+    @apply max-w-full;
+  }
+
+  p {
+    @apply tracking-normal;
+  }
+}
+
+@layer components {
+  .article-body {
+    @apply text-slate-700;
+  }
+
+  .article-body > :first-child {
+    @apply mt-0;
+  }
+
+  .article-body h2 {
+    @apply mt-12 mb-5 scroll-mt-24 border-b border-slate-200 pb-3 text-3xl font-black leading-tight tracking-normal text-slate-950;
+  }
+
+  .article-body > h2#目次 {
+    @apply hidden;
+  }
+
+  .article-body h3 {
+    @apply mt-9 mb-4 scroll-mt-24 text-2xl font-black leading-tight tracking-normal text-slate-900;
+  }
+
+  .article-body h4 {
+    @apply mt-7 mb-3 text-xl font-black text-slate-900;
+  }
+
+  .article-body p {
+    @apply mb-6 leading-8;
+  }
+
+  .article-body ul,
+  .article-body ol {
+    @apply mb-7 pl-6 leading-8;
+  }
+
+  .article-body li {
+    @apply mb-2;
+  }
+
+  .article-body li > ul,
+  .article-body li > ol {
+    @apply mt-2 mb-0;
+  }
+
+  .article-body blockquote {
+    @apply my-8 rounded-r-2xl border-l-4 border-rose-600 bg-rose-50 px-5 py-4 text-slate-600;
+  }
+
+  .article-body table {
+    @apply my-8 w-full overflow-hidden rounded-xl border border-slate-200 text-sm;
+  }
+
+  .article-body th,
+  .article-body td {
+    @apply border-b border-slate-200 px-4 py-3 text-left;
+  }
+
+  .article-body th {
+    @apply bg-slate-50 font-black text-slate-950;
+  }
+
+  .article-body img {
+    @apply my-8 rounded-2xl shadow-2xl shadow-slate-950/10;
+  }
+
+  .article-body :not(pre) > code {
+    @apply rounded-md bg-slate-100 px-1.5 py-0.5 text-[0.9em] font-semibold text-rose-700;
+  }
+
+  .toc {
+    @apply my-8 rounded-2xl border border-slate-200 bg-slate-50 p-5 shadow-sm;
+  }
+
+  .toc::before {
+    content: "目次";
+    @apply mb-3 block text-sm font-black text-slate-950;
+  }
+
+  .toc ol {
+    @apply m-0 grid list-none gap-2 p-0;
+  }
+
+  .toc li {
+    @apply m-0;
+  }
+
+  .toc a {
+    @apply text-sm font-bold text-slate-600 no-underline hover:text-rose-700;
+  }
+
+  .toc-depth-2 {
+    @apply pl-4;
+  }
+
+  .code-title {
+    @apply my-0 hidden;
+  }
+
+  .code-block {
+    @apply my-8 overflow-hidden rounded-2xl border border-slate-800 bg-slate-950 shadow-2xl shadow-slate-950/20;
+  }
+
+  .code-toolbar {
+    @apply flex min-h-11 items-center justify-between gap-4 border-b border-slate-800 bg-slate-900 px-3 py-2;
+  }
+
+  .code-label {
+    @apply min-w-0 overflow-hidden text-ellipsis whitespace-nowrap text-xs font-black text-slate-300;
+  }
+
+  .code-copy {
+    @apply min-h-8 rounded-full border border-slate-700 bg-slate-800 px-3 text-xs font-black text-slate-100 transition hover:border-slate-500 hover:bg-slate-700;
+  }
+
+  .astro-code {
+    @apply m-0 overflow-auto rounded-none !bg-slate-950 p-5 text-sm leading-7;
+  }
+
+  .astro-code code {
+    @apply grid min-w-max bg-transparent p-0 text-inherit;
+  }
+
+  pre:not(.astro-code):not(.mermaid) {
+    @apply my-8 overflow-auto rounded-2xl bg-slate-950 p-5 text-sm leading-7 text-slate-100;
+  }
+
+  .mermaid {
+    @apply my-8 overflow-auto rounded-2xl border border-slate-200 bg-white p-5 shadow-lg shadow-slate-950/5;
+  }
+
+  nav.mx-auto li {
+    @apply m-0;
+  }
+
+  nav.mx-auto a[rel] {
+    @apply flex min-h-16 items-center rounded-2xl border border-slate-200 bg-white px-4 py-3 font-black text-slate-950 no-underline shadow-sm transition hover:border-rose-200 hover:text-rose-700 hover:shadow-xl hover:shadow-slate-950/10;
+  }
+
+  nav.mx-auto li:last-child a[rel] {
+    @apply justify-end text-right sm:justify-end;
+  }
+}

@@ -1,0 +1,28 @@
+---
+import { getCollection } from "astro:content"
+import Base from "../../layouts/Base.astro"
+import Bio from "../../components/Bio.astro"
+import PostList from "../../components/PostList.astro"
+import { allTags, byDateDesc, tagSlug } from "../../utils"
+
+export async function getStaticPaths() {
+  const posts = await getCollection("blog")
+  return allTags(posts).map(tag => ({
+    params: { tag: tagSlug(tag) },
+    props: { tag },
+  }))
+}
+
+const { tag } = Astro.props
+const posts = (await getCollection("blog"))
+  .filter(post => post.data.tags.includes(tag))
+  .sort(byDateDesc)
+---
+
+<Base title={`Tags: ${tag}`}>
+  <Bio />
+  <h1 class="mb-8 text-3xl font-black text-white sm:text-5xl">
+    {tag} ({posts.length}件)
+  </h1>
+  <PostList posts={posts} />
+</Base>

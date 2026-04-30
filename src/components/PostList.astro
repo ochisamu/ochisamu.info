@@ -1,0 +1,59 @@
+---
+import type { BlogPost } from "../utils"
+import { postHref } from "../utils"
+import EyeCatch from "./EyeCatch.astro"
+import PostMeta from "./PostMeta.astro"
+
+interface Props {
+  posts: BlogPost[]
+}
+
+const { posts } = Astro.props
+---
+
+<ol class="grid list-none gap-5 p-0 md:grid-cols-2 xl:grid-cols-3">
+  {
+    posts.map(post => (
+      <li class="m-0">
+        <article
+          class="group relative grid h-full grid-rows-[auto_1fr] overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition duration-200 hover:-translate-y-1 hover:border-rose-200 hover:shadow-2xl hover:shadow-slate-900/10 focus-within:-translate-y-1 focus-within:border-rose-300 focus-within:shadow-2xl focus-within:shadow-slate-900/10"
+          itemscope
+          itemtype="http://schema.org/Article"
+        >
+          <a
+            class="absolute inset-0 z-10 rounded-2xl no-underline outline-none focus-visible:ring-4 focus-visible:ring-rose-300/70"
+            href={postHref(post)}
+            itemprop="url"
+            aria-label={`${post.data.title} を読む`}
+          >
+            <span class="sr-only">{post.data.title} を読む</span>
+          </a>
+          <EyeCatch type="index" tags={post.data.tags} />
+          <header class="p-5">
+            <h2 class="mb-3 mt-0 text-xl font-black leading-tight tracking-normal text-slate-950">
+              <span
+                class="transition group-hover:text-rose-700 group-focus-within:text-rose-700"
+                itemprop="headline"
+              >
+                {post.data.title}
+              </span>
+            </h2>
+            <PostMeta date={post.data.date} tags={post.data.tags} />
+            <div
+              class="mt-5 inline-flex items-center gap-2 text-sm font-black text-rose-700 transition group-hover:gap-3 group-focus-within:gap-3"
+              aria-hidden="true"
+            >
+              読む
+              <svg
+                class="size-4 fill-none stroke-current stroke-2"
+                viewBox="0 0 24 24"
+              >
+                <path d="M5 12h14M13 6l6 6-6 6" />
+              </svg>
+            </div>
+          </header>
+        </article>
+      </li>
+    ))
+  }
+</ol>
