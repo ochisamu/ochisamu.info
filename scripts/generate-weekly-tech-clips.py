@@ -530,26 +530,19 @@ def write_outputs(clips: list[Clip], body: str) -> None:
         for clip in clips
     )
 
-    markdown = textwrap.dedent(
-        f"""\
-        ---
-        title: "今週読んだ技術記事メモ {date}"
-        date: "{date}"
-        description: "スマホから保存した技術記事クリップの週次まとめ。"
-        tags: ["Tech Clips", "AI", "開発メモ"]
-        ---
-
-        ```toc
-        ```
-
-        {body}
-
-        ---
-
-        ## 参照したクリップ
-
-        {references}
-        """
+    markdown = (
+        f'---\n'
+        f'title: "今週読んだ技術記事メモ {date}"\n'
+        f'date: "{date}"\n'
+        f'description: "スマホから保存した技術記事クリップの週次まとめ。"\n'
+        f'tags: ["Tech Clips", "AI", "開発メモ"]\n'
+        f'---\n\n'
+        f'```toc\n'
+        f'```\n\n'
+        f'{body.strip()}\n\n'
+        f'---\n\n'
+        f'## 参照したクリップ\n\n'
+        f'{references}\n'
     )
 
     (out_dir / "index.md").write_text(markdown, encoding="utf-8")
