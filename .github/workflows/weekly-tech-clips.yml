@@ -33,20 +33,27 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          if git diff --quiet; then
+          git status --short
+
+          if [ -z "$(git status --porcelain)" ]; then
             echo "No changes"
             exit 0
           fi
 
           BRANCH="weekly-tech-clips-${GITHUB_RUN_ID}"
+
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
           git checkout -b "$BRANCH"
           git add src/content/blog
+          git status --short
+
           git commit -m "Add weekly tech clips"
           git push origin "$BRANCH"
 
           gh pr create \
-            --title "Weekly Tech Clips" \
+            --base main \
+            --head "$BRANCH" \
+            --title "Weekly Tech Clips ${GITHUB_RUN_ID}" \
             --body "スマホから保存した tech-clip Issue をもとに週次まとめ記事を生成しました。"
