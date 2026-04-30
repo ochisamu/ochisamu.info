@@ -1,0 +1,18 @@
+{
+  "generatedAt": "2026-04-30T16:12:33.237783+09:00",
+  "generator": "deepagents",
+  "issues": [
+    {
+      "number": 23,
+      "issueUrl": "https://github.com/ochisamu/ochisamu.info/issues/23",
+      "sourceUrl": "https://zenn.dev/layerx/articles/a99cd11af487fc",
+      "fetchStatus": "ok"
+    },
+    {
+      "number": 20,
+      "issueUrl": "https://github.com/ochisamu/ochisamu.info/issues/20",
+      "sourceUrl": "https://zenn.dev/aircloset/articles/65efe9614f8e73",
+      "fetchStatus": "ok"
+    }
+  ]
+}
