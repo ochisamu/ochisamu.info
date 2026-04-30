@@ -6,13 +6,19 @@ import { site } from "../site"
 interface Props {
   title?: string
   description?: string
+  image?: string
 }
 
 const title = Astro.props.title
   ? `${Astro.props.title} | ${site.title}`
   : site.title
 const description = Astro.props.description ?? site.description
+const image = new URL(
+  Astro.props.image ?? "/cat-solid.png",
+  site.url,
+).toString()
 const isHome = Astro.url.pathname === "/"
+const isTags = Astro.url.pathname.startsWith("/tags")
 ---
 
 <!doctype html>
@@ -23,11 +29,13 @@ const isHome = Astro.url.pathname === "/"
     <meta name="description" content={description} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
+    <meta property="og:image" content={image} />
     <meta property="og:type" content="website" />
-    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:creator" content={`@${site.social.twitter}`} />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={image} />
     <link rel="icon" type="image/png" href="/cat-solid.png" />
     <link rel="shortcut icon" type="image/png" href="/cat-solid.png" />
     <link
@@ -84,6 +92,14 @@ const isHome = Astro.url.pathname === "/"
             ]}
             href="/"
             aria-current={isHome ? "page" : undefined}>Articles</a
+          >
+          <a
+            class:list={[
+              "rounded-full px-3 py-2 text-sm font-bold no-underline transition hover:bg-white/10 hover:text-white",
+              isTags ? "bg-white text-slate-950" : "text-slate-300",
+            ]}
+            href="/tags/"
+            aria-current={isTags ? "page" : undefined}>Tags</a
           >
           <a
             class="rounded-full px-3 py-2 text-sm font-bold text-slate-300 no-underline transition hover:bg-white/10 hover:text-white max-[420px]:hidden"

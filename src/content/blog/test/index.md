@@ -1,6 +1,7 @@
 ---
 title: はじめに
 date: "2022-01-09"
+description: 技術メモサイトの初期方針と ToDo。
 tags: ["ToDo", "test"]
 ---
 

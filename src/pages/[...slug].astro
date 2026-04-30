@@ -20,9 +20,21 @@ export async function getStaticPaths() {
 
 const { post, previous, next } = Astro.props
 const { Content } = await render(post)
+const hasMermaid = post.body.includes("```mermaid")
+const mermaidInitScript = `
+window.addEventListener("load", function () {
+  if (window.mermaid) {
+    window.mermaid.initialize({ startOnLoad: true });
+  }
+});
+`
 ---
 
-<Base title={post.data.title} description={post.data.description}>
+<Base
+  title={post.data.title}
+  description={post.data.description}
+  image={post.data.image}
+>
   <article
     class="mx-auto max-w-3xl"
     itemscope
@@ -84,13 +96,12 @@ const { Content } = await render(post)
       href="/">記事一覧へ戻る</a
     >
   </div>
-  <script>
-    const diagrams = document.querySelectorAll(".mermaid")
-
-    if (diagrams.length > 0) {
-      import("mermaid").then(({ default: mermaid }) => {
-        mermaid.initialize({ startOnLoad: true })
-      })
-    }
-  </script>
+  {
+    hasMermaid && (
+      <>
+        <script defer src="/vendor/mermaid.min.js" />
+        <script is:inline set:html={mermaidInitScript} />
+      </>
+    )
+  }
 </Base>

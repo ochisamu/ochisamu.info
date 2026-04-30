@@ -27,6 +27,11 @@ const visit = (node, callback, parent = null) => {
   }
 };
 
+const isImageParagraph = (node) =>
+  node?.type === "paragraph" &&
+  node.children?.length === 1 &&
+  node.children[0]?.type === "image";
+
 export function remarkAstroBlog() {
   return (tree) => {
     const headings = [];
@@ -95,6 +100,25 @@ export function remarkAstroBlog() {
         }
 
         transformChildren(child);
+      }
+
+      for (let index = 0; index < node.children.length; index += 1) {
+        if (!isImageParagraph(node.children[index])) continue;
+
+        const start = index;
+        while (isImageParagraph(node.children[index])) index += 1;
+        const count = index - start;
+
+        if (count >= 2) {
+          node.children.splice(
+            start,
+            count,
+            { type: "html", value: '<div class="image-grid">' },
+            ...node.children.slice(start, start + count),
+            { type: "html", value: "</div>" },
+          );
+          index = start + count + 1;
+        }
       }
     };
 

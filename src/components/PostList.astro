@@ -43,6 +43,11 @@ const { posts } = Astro.props
               updated={post.data.updated}
               tags={post.data.tags}
             />
+            {post.data.description && (
+              <p class="mt-4 line-clamp-2 text-sm leading-6 text-slate-600">
+                {post.data.description}
+              </p>
+            )}
             <div
               class="mt-5 inline-flex items-center gap-2 text-sm font-black text-rose-700 transition group-hover:gap-3 group-focus-within:gap-3"
               aria-hidden="true"

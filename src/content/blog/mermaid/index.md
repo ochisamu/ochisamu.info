@@ -1,6 +1,7 @@
 ---
 title: mermaid.js のテスト
 date: "2021-01-19"
+description: Mermaid の各種ダイアグラムとコードブロック表示のテスト。
 tags: ["Gatsby", "mermaid-js", "test"]
 ---
 
