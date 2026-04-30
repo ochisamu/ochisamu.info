@@ -31,29 +31,70 @@ jobs:
 
       - name: Create Pull Request
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          git status --short
-
-          if [ -z "$(git status --porcelain)" ]; then
-            echo "No changes"
-            exit 0
-          fi
-
           BRANCH="weekly-tech-clips-${GITHUB_RUN_ID}"
+          BASE="master"
 
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
           git checkout -b "$BRANCH"
           git add src/content/blog
+
           git status --short
+
+          if git diff --cached --quiet; then
+            echo "No staged changes"
+            exit 0
+          fi
 
           git commit -m "Add weekly tech clips"
           git push origin "$BRANCH"
 
-          gh pr create \
-            --base main \
-            --head "$BRANCH" \
-            --title "Weekly Tech Clips ${GITHUB_RUN_ID}" \
-            --body "スマホから保存した tech-clip Issue をもとに週次まとめ記事を生成しました。"
+          PR_BODY="スマホから保存した tech-clip Issue をもとに週次まとめ記事を生成しました。"
+
+          PAYLOAD=$(jq -n \
+            --arg title "Weekly Tech Clips ${GITHUB_RUN_ID}" \
+            --arg head "$BRANCH" \
+            --arg base "$BASE" \
+            --arg body "$PR_BODY" \
+            '{
+              title: $title,
+              head: $head,
+              base: $base,
+              body: $body
+            }'
+          )
+
+          for i in 1 2 3; do
+            echo "Creating pull request... attempt $i"
+
+            RESPONSE=$(curl -sS -w "\n%{http_code}" \
+              -X POST \
+              -H "Accept: application/vnd.github+json" \
+              -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              "https://api.github.com/repos/${GITHUB_REPOSITORY}/pulls" \
+              -d "$PAYLOAD")
+
+            BODY=$(echo "$RESPONSE" | sed '$d')
+            STATUS=$(echo "$RESPONSE" | tail -n 1)
+
+            echo "GitHub API status: $STATUS"
+
+            if [ "$STATUS" = "201" ]; then
+              echo "Pull request created:"
+              echo "$BODY" | jq -r '.html_url'
+              exit 0
+            fi
+
+            echo "$BODY"
+
+            if [ "$i" -lt 3 ]; then
+              sleep 10
+            fi
+          done
+
+          echo "Failed to create pull request"
+          exit 1
