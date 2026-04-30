@@ -29,33 +29,36 @@ const { Content } = await render(post)
     itemtype="http://schema.org/Article"
   >
     <header
-      class="mb-8 rounded-3xl bg-white p-4 shadow-2xl shadow-slate-950/10 ring-1 ring-slate-200 sm:p-5"
+      class="mb-6 rounded-2xl bg-white p-3 shadow-2xl shadow-slate-950/10 ring-1 ring-slate-200 sm:mb-8 sm:rounded-3xl sm:p-5"
     >
       <EyeCatch type="post" tags={post.data.tags} />
-      <div class="px-1 pt-6 sm:px-3 sm:pt-7">
+      <div class="px-1 pt-5 sm:px-3 sm:pt-7">
         <h1
-          class="mb-5 text-balance text-4xl font-black leading-tight tracking-normal text-slate-950 sm:text-5xl"
+          class="mb-5 text-balance text-3xl font-black leading-tight tracking-normal text-slate-950 sm:text-5xl"
           itemprop="headline"
         >
           {post.data.title}
         </h1>
-        <PostMeta date={post.data.date} tags={post.data.tags} />
+        <PostMeta
+          date={post.data.date}
+          updated={post.data.updated}
+          tags={post.data.tags}
+        />
       </div>
     </header>
     <section
-      class="article-body rounded-3xl bg-white px-5 py-8 shadow-2xl shadow-slate-950/10 ring-1 ring-slate-200 sm:px-8 md:px-10"
+      class="article-body rounded-2xl bg-white px-4 py-7 shadow-2xl shadow-slate-950/10 ring-1 ring-slate-200 sm:rounded-3xl sm:px-8 sm:py-8 md:px-10"
       itemprop="articleBody"
     >
       <Content />
     </section>
-    <hr />
-    <footer>
-      <Bio />
-    </footer>
   </article>
+  <footer class="mx-auto mt-12 max-w-3xl sm:mt-16">
+    <Bio />
+  </footer>
   {
     (previous || next) && (
-      <nav class="mx-auto max-w-3xl" aria-label="記事ナビゲーション">
+      <nav class="mx-auto mt-10 max-w-3xl" aria-label="記事ナビゲーション">
         <ul class="grid list-none gap-3 p-0 sm:grid-cols-2">
           {previous && (
             <li>

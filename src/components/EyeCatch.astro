@@ -23,14 +23,14 @@ const background =
     background,
     isIndex
       ? "aspect-[16/10] w-full"
-      : "min-h-48 w-full rounded-2xl sm:min-h-60",
+      : "min-h-44 w-full rounded-xl sm:min-h-60 sm:rounded-2xl",
   ]}
 >
   {
     kind === "keyboard" ? (
       <svg
         class:list={[
-          isIndex ? "size-14" : "size-28",
+          isIndex ? "size-14" : "size-20 sm:size-28",
           "fill-none stroke-current stroke-[1.8]",
         ]}
         aria-hidden="true"
@@ -42,7 +42,7 @@ const background =
     ) : kind === "gatsby" ? (
       <svg
         class:list={[
-          isIndex ? "size-14" : "size-28",
+          isIndex ? "size-14" : "size-20 sm:size-28",
           "fill-none stroke-current stroke-[1.8]",
         ]}
         aria-hidden="true"
@@ -56,7 +56,7 @@ const background =
     ) : (
       <svg
         class:list={[
-          isIndex ? "size-14" : "size-28",
+          isIndex ? "size-14" : "size-20 sm:size-28",
           "fill-none stroke-current stroke-[1.8]",
         ]}
         aria-hidden="true"

@@ -16,7 +16,7 @@ const { posts } = Astro.props
     posts.map(post => (
       <li class="m-0">
         <article
-          class="group relative grid h-full grid-rows-[auto_1fr] overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition duration-200 hover:-translate-y-1 hover:border-rose-200 hover:shadow-2xl hover:shadow-slate-900/10 focus-within:-translate-y-1 focus-within:border-rose-300 focus-within:shadow-2xl focus-within:shadow-slate-900/10"
+          class="group isolate relative grid h-full grid-rows-[auto_1fr] overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition duration-200 hover:-translate-y-1 hover:border-rose-200 hover:shadow-2xl hover:shadow-slate-900/10 focus-within:-translate-y-1 focus-within:border-rose-300 focus-within:shadow-2xl focus-within:shadow-slate-900/10"
           itemscope
           itemtype="http://schema.org/Article"
         >
@@ -38,7 +38,11 @@ const { posts } = Astro.props
                 {post.data.title}
               </span>
             </h2>
-            <PostMeta date={post.data.date} tags={post.data.tags} />
+            <PostMeta
+              date={post.data.date}
+              updated={post.data.updated}
+              tags={post.data.tags}
+            />
             <div
               class="mt-5 inline-flex items-center gap-2 text-sm font-black text-rose-700 transition group-hover:gap-3 group-focus-within:gap-3"
               aria-hidden="true"

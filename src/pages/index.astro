@@ -24,6 +24,8 @@ const posts = (await getCollection("blog")).sort(byDateDesc)
       検証ログや設定メモを、あとから読み返しやすい形で残しています。
     </p>
   </section>
-  <Bio />
+  <div class="mb-10">
+    <Bio />
+  </div>
   <PostList posts={posts} />
 </Base>

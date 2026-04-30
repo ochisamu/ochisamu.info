@@ -20,7 +20,9 @@ const posts = (await getCollection("blog"))
 ---
 
 <Base title={`Tags: ${tag}`}>
-  <Bio />
+  <div class="mb-10">
+    <Bio />
+  </div>
   <h1 class="mb-8 text-3xl font-black text-white sm:text-5xl">
     {tag} ({posts.length}件)
   </h1>
