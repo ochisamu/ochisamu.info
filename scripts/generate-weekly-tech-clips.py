@@ -447,10 +447,12 @@ def build_article_body(clips: list[Clip]) -> str:
             - Do not invent facts that are not in the article or search results.
             - Avoid long quotations.
 
-            Return Japanese Markdown under this exact structure:
-            ## Clip #<number>
+            Return concise Japanese research notes. This is internal material only.
+            Do not use "Clip #<number>" as a heading. Do not expose fetch status
+            unless there is a problem that affects confidence.
+
+            Output format:
             - 元記事: [title](url)
-            - 取得状況: fetch status and any caveats
             - 記事の要点: 3 bullets max
             - コメントとの接続: 2 bullets max
             - 書くときの注意: 1-2 bullets
@@ -484,6 +486,7 @@ def build_article_body(clips: list[Clip]) -> str:
             Article shape:
             - Short opening paragraph.
             - One section per clip.
+            - Section headings must be natural topic titles, not "Clip 23", "Clip #23", issue numbers, or internal labels.
             - Each clip section uses: 元記事 / ひとこと / 読んで考えたこと.
             - Close with "今週の所感".
             """
@@ -523,9 +526,8 @@ def write_outputs(clips: list[Clip], body: str) -> None:
 
     references = "\n".join(
         (
-            f"- #{clip.number}: "
-            f"[{escape_markdown_link_text(clip.source_title or clip.url)}]"
-            f"({clip.source_url}) ({clip.fetch_status})"
+            f"- [{escape_markdown_link_text(clip.source_title or clip.url)}]"
+            f"({clip.source_url})"
         )
         for clip in clips
     )
