@@ -53,7 +53,23 @@ jobs:
           git commit -m "Add weekly tech clips"
           git push origin "$BRANCH"
 
-          PR_BODY="スマホから保存した tech-clip Issue をもとに週次まとめ記事を生成しました。"
+          ISSUE_LIST=$(find src/content/blog -path '*/tech-clips/*/clips.json' -print \
+            | sort \
+            | tail -n 1 \
+            | xargs jq -r '.issues[] | "- #" + (.number | tostring) + ": " + .sourceUrl + " (" + .fetchStatus + ")"')
+
+          PR_BODY=$(cat <<EOF
+          スマホから保存した tech-clip Issue をもとに週次まとめ記事を生成しました。
+
+          <!-- weekly-tech-clips-issues
+          ${ISSUE_LIST}
+          -->
+
+          ## 対象 Issue
+
+          ${ISSUE_LIST}
+          EOF
+          )
 
           PAYLOAD=$(jq -n \
             --arg title "Weekly Tech Clips ${GITHUB_RUN_ID}" \

@@ -452,6 +452,10 @@ function getOutputDir() {
   return path.join("src", "content", "blog", String(yyyy), "tech-clips", date)
 }
 
+function getOutputMetaPath() {
+  return path.join(getOutputDir(), "clips.json")
+}
+
 function getOpenAIText(responseJson) {
   if (typeof responseJson.output_text === "string") {
     return responseJson.output_text.trim()
@@ -626,8 +630,25 @@ ${clips
   const outDir = getOutputDir()
   await fs.mkdir(outDir, { recursive: true })
   await fs.writeFile(path.join(outDir, "index.md"), markdown)
+  await fs.writeFile(
+    getOutputMetaPath(),
+    `${JSON.stringify(
+      {
+        generatedAt: new Date().toISOString(),
+        issues: clips.map(clip => ({
+          number: clip.number,
+          issueUrl: clip.issueUrl,
+          sourceUrl: clip.sourceUrl,
+          fetchStatus: clip.fetchStatus,
+        })),
+      },
+      null,
+      2,
+    )}\n`,
+  )
 
   console.log(`Generated ${outDir}/index.md`)
+  console.log(`Generated ${getOutputMetaPath()}`)
 }
 
 main().catch(error => {
