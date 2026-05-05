@@ -176,4 +176,25 @@
   nav.mx-auto li:last-child a[rel] {
     @apply justify-end text-right sm:justify-end;
   }
+
+  .share-toolbar {
+    @apply flex flex-wrap items-center justify-between gap-3;
+  }
+
+  .share-button {
+    @apply inline-flex min-h-11 items-center rounded-full border border-slate-200 bg-white px-4 text-sm font-black text-slate-700 no-underline shadow-sm transition hover:border-rose-200 hover:text-rose-700 hover:shadow-lg;
+  }
+
+  .share-status {
+    @apply mt-2 mb-0 text-sm font-bold text-slate-600;
+    min-height: 1.5rem;
+  }
+
+  .share-fallback-links {
+    @apply mt-1 flex flex-wrap gap-3;
+  }
+
+  .share-fallback-links a {
+    @apply text-sm font-black;
+  }
 }
