@@ -28,6 +28,7 @@ window.addEventListener("load", function () {
   }
 });
 `
+const shareText = `${post.data.title} | ochisamu.info`
 ---
 
 <Base
@@ -63,6 +64,30 @@ window.addEventListener("load", function () {
       itemprop="articleBody"
     >
       <Content />
+    </section>
+    <section class="mt-4 rounded-2xl bg-white p-4 shadow-2xl shadow-slate-950/10 ring-1 ring-slate-200 sm:mt-5 sm:rounded-3xl sm:p-5">
+      <div class="share-toolbar">
+        <h2 class="m-0 text-base font-black text-slate-950">この記事を共有</h2>
+        <button
+          type="button"
+          class="share-button"
+          data-share-native
+          data-share-title={post.data.title}
+          data-share-text={shareText}
+        >
+          共有する
+        </button>
+      </div>
+      <p class="share-status" data-share-status role="status" aria-live="polite"></p>
+      <div class="share-fallback-links" data-share-fallback hidden>
+        <a
+          href={`https://x.com/intent/tweet?text=${encodeURIComponent(shareText)}`}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          X で共有
+        </a>
+      </div>
     </section>
   </article>
   <footer class="mx-auto mt-12 max-w-3xl sm:mt-16">
@@ -104,4 +129,43 @@ window.addEventListener("load", function () {
       </>
     )
   }
+  <script is:inline>
+    (() => {
+      const button = document.querySelector("[data-share-native]");
+      const status = document.querySelector("[data-share-status]");
+      const fallback = document.querySelector("[data-share-fallback]");
+      if (!button || !status || !fallback) return;
+
+      if (!("share" in navigator)) {
+        fallback.removeAttribute("hidden");
+      }
+
+      button.addEventListener("click", async () => {
+        const url = window.location.href;
+        const title = button.getAttribute("data-share-title") || document.title;
+        const text = button.getAttribute("data-share-text") || title;
+        status.textContent = "";
+
+        try {
+          if (navigator.share) {
+            await navigator.share({ title, text, url });
+            return;
+          }
+
+          if (navigator.clipboard?.writeText) {
+            await navigator.clipboard.writeText(url);
+            status.textContent = "リンクをコピーしました。";
+            fallback.removeAttribute("hidden");
+            return;
+          }
+
+          fallback.removeAttribute("hidden");
+          status.textContent = "共有機能が使えないため、リンクから共有してください。";
+        } catch (_error) {
+          fallback.removeAttribute("hidden");
+          status.textContent = "共有できなかったため、リンクから共有してください。";
+        }
+      });
+    })();
+  </script>
 </Base>
