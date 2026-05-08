@@ -30,6 +30,20 @@ OPENAI_WEB_SEARCH = os.environ.get("OPENAI_WEB_SEARCH", "true").lower() not in {
     "no",
 }
 
+AUTHOR_STYLE_GUIDE = """
+Author style reference:
+- Write like a practical Japanese technical note based on personal implementation experience.
+- Start from why the topic mattered or what problem was noticed, then move to concrete details.
+- Prefer plain endings such as 「しました」「しています」「思いました」「気になりました」 over polished essay-like wording.
+- Use first-person observations naturally: 「今回は」「この記事では」「読んでいて」「実装するなら」.
+- Explain constraints and trade-offs explicitly: limits, operational burden, stability, maintainability, cost, or workflow fit.
+- When listing points, use short bullet lists only when they help organize implementation details.
+- Parenthetical asides are acceptable when they sound like a personal note, but avoid overusing them.
+- Avoid marketing copy, dramatic phrasing, and abstract conclusions.
+- Do not sound like a generic article summary. The article should read like the author is recording what they tried, noticed, and may want to try next.
+- Section headings should be concrete topic labels, similar to 「背景」「進め方」「結果」「最終的な構成」, but adapted to the linked article.
+""".strip()
+
 
 if not GITHUB_TOKEN:
     raise RuntimeError("GITHUB_TOKEN is required")
@@ -446,6 +460,7 @@ def build_article_body(clips: list[Clip]) -> str:
             - Do not over-summarize the original article; explain only enough context for the blog author's comment.
             - Do not invent facts that are not in the article or search results.
             - Avoid long quotations.
+            - Extract details that help the editor write in the author's style: background, concrete implementation choices, trade-offs, operational concerns, and what might be worth trying next.
 
             Return concise Japanese research notes. This is internal material only.
             Do not use "Clip #<number>" as a heading. Do not expose fetch status
@@ -454,6 +469,7 @@ def build_article_body(clips: list[Clip]) -> str:
             Output format:
             - 元記事: [title](url)
             - 記事の要点: 3 bullets max
+            - 実装・運用で気になりそうな点: 3 bullets max
             - コメントとの接続: 2 bullets max
             - 書くときの注意: 1-2 bullets
             """
@@ -469,6 +485,8 @@ def build_article_body(clips: list[Clip]) -> str:
             """
             You are the editor of ochisamu.info, a Japanese personal technical memo site.
 
+            {style_guide}
+
             Required workflow:
             1. For every clip in the input, call the article-reader subagent exactly once.
             2. Use the returned reader notes as the primary material.
@@ -478,6 +496,8 @@ def build_article_body(clips: list[Clip]) -> str:
             - The author's comment is the center of each section.
             - The source article context supports the comment; it is not a generic summary article.
             - Clearly link to the original URL.
+            - Write as a personal technical memo: why it caught attention, what implementation or operation point mattered, and what could be tried later.
+            - Prefer concrete observations over broad statements about industry trends.
             - Mention uncertainty if a page could not be fetched or only partial context was available.
             - Do not claim anything that was not in reader notes, fetched content, or search results.
             - Do not output frontmatter.
@@ -488,9 +508,12 @@ def build_article_body(clips: list[Clip]) -> str:
             - One section per clip.
             - Section headings must be natural topic titles, not "Clip 23", "Clip #23", issue numbers, or internal labels.
             - Each clip section uses: 元記事 / ひとこと / 読んで考えたこと.
-            - Close with "今週の所感".
+            - In 「読んで考えたこと」, include the concrete implementation or operation angle when possible.
+            - Close with "今週の所感", written as a short practical note about what the author may want to try or watch next.
             """
-        ).strip(),
+        )
+        .format(style_guide=AUTHOR_STYLE_GUIDE)
+        .strip(),
     )
 
     prompt = textwrap.dedent(
