@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import base64
 import html
 import json
 import os
@@ -29,6 +30,14 @@ OPENAI_WEB_SEARCH = os.environ.get("OPENAI_WEB_SEARCH", "true").lower() not in {
     "false",
     "no",
 }
+GENERATE_COVER_IMAGE = os.environ.get("GENERATE_COVER_IMAGE", "false").lower() in {
+    "1",
+    "true",
+    "yes",
+}
+OPENAI_IMAGE_MODEL = os.environ.get("OPENAI_IMAGE_MODEL", "gpt-image-2")
+OPENAI_IMAGE_SIZE = os.environ.get("OPENAI_IMAGE_SIZE", "1536x1024")
+OPENAI_IMAGE_QUALITY = os.environ.get("OPENAI_IMAGE_QUALITY", "high")
 
 AUTHOR_STYLE_GUIDE = """
 Author style reference:
@@ -369,6 +378,21 @@ def strip_markdown_fence(value: str) -> str:
     return match.group(1).strip() if match else value
 
 
+def extract_article_topics(body: str, max_items: int = 6) -> list[str]:
+    topics = []
+    for line in body.splitlines():
+        match = re.match(r"^#{2,3}\s+(.+?)\s*$", line)
+        if not match:
+            continue
+        title = match.group(1).strip()
+        if title in {"今週の所感", "参照したクリップ"}:
+            continue
+        topics.append(title)
+        if len(topics) >= max_items:
+            break
+    return topics
+
+
 def load_clips() -> list[Clip]:
     issues = github(
         f"/repos/{OWNER_REPO}/issues?state=open&labels={urllib.parse.quote(SOURCE_LABEL)}&per_page=100"
@@ -537,6 +561,80 @@ def escape_markdown_link_text(value: str) -> str:
     return value.replace("\\", "\\\\").replace("[", "\\[").replace("]", "\\]")
 
 
+def build_cover_image_prompt(clips: list[Clip], body: str, date: str) -> str:
+    topics = extract_article_topics(body)
+    source_titles = [clip.source_title for clip in clips if clip.source_title][:6]
+    comments = [clip.comment for clip in clips if clip.comment][:4]
+
+    return textwrap.dedent(
+        f"""
+        Create a landscape editorial cover illustration for a Japanese personal
+        technical blog weekly roundup.
+
+        Article date: {date}
+        Main topics:
+        {json.dumps(topics or source_titles, ensure_ascii=False, indent=2)}
+
+        Author notes:
+        {json.dumps(comments, ensure_ascii=False, indent=2)}
+
+        Visual direction:
+        - Japanese technical notebook / field note cover.
+        - Abstract diagram about saved web articles becoming a reviewed blog post.
+        - Include visual motifs such as clipped notes, GitHub issue cards, workflow
+          arrows, small terminal panels, browser/article sheets, and AI-assisted
+          editing as abstract shapes.
+        - Use the site's palette: warm paper, black ink, teal, rust orange, and a
+          small yellow accent.
+        - Clean editorial composition, subtle grid paper texture, crisp vector-like
+          shapes, production-quality blog cover.
+
+        Hard constraints:
+        - No readable text, no Japanese text, no English words, no logos.
+        - Do not reproduce screenshots, product UIs, website layouts, or brand marks.
+        - Do not include people, faces, mascots, or photorealistic devices.
+        - The result should work as an article image, not an advertisement.
+        """
+    ).strip()
+
+
+def generate_cover_image(clips: list[Clip], body: str, out_dir: Path, date: str) -> str:
+    prompt = build_cover_image_prompt(clips, body, date)
+    print("Generating cover image")
+    print(f"Image model: {OPENAI_IMAGE_MODEL}")
+    print(f"Image size: {OPENAI_IMAGE_SIZE}")
+    print(f"Image quality: {OPENAI_IMAGE_QUALITY}")
+
+    payload = {
+        "model": OPENAI_IMAGE_MODEL,
+        "prompt": prompt,
+        "size": OPENAI_IMAGE_SIZE,
+        "quality": OPENAI_IMAGE_QUALITY,
+        "n": 1,
+    }
+    request = urllib.request.Request(
+        "https://api.openai.com/v1/images/generations",
+        data=json.dumps(payload).encode("utf-8"),
+        method="POST",
+        headers={
+            "Authorization": f"Bearer {OPENAI_API_KEY}",
+            "Content-Type": "application/json",
+        },
+    )
+
+    with urllib.request.urlopen(request, timeout=180) as response:
+        data = json.loads(response.read().decode("utf-8"))
+
+    image_b64 = (data.get("data") or [{}])[0].get("b64_json")
+    if not image_b64:
+        raise RuntimeError("Image generation response did not include b64_json")
+
+    cover_path = out_dir / "cover.png"
+    cover_path.write_bytes(base64.b64decode(image_b64))
+    print(f"Generated {cover_path}")
+    return prompt
+
+
 def output_dir() -> Path:
     year, date = jst_date()
     return Path("src") / "content" / "blog" / year / "tech-clips" / date
@@ -546,6 +644,18 @@ def write_outputs(clips: list[Clip], body: str) -> None:
     _, date = jst_date()
     out_dir = output_dir()
     out_dir.mkdir(parents=True, exist_ok=True)
+    cover_prompt = None
+    cover_markdown = ""
+
+    if GENERATE_COVER_IMAGE:
+        try:
+            cover_prompt = generate_cover_image(clips, body, out_dir, date)
+            cover_markdown = (
+                f'![今週読んだ技術記事メモ {date} のカバー画像](./cover.png)\n\n'
+            )
+        except Exception as error:
+            print("Cover image generation failed; continuing without cover image")
+            print(error)
 
     references = "\n".join(
         (
@@ -564,6 +674,7 @@ def write_outputs(clips: list[Clip], body: str) -> None:
         f'---\n\n'
         f'```toc\n'
         f'```\n\n'
+        f'{cover_markdown}'
         f'{body.strip()}\n\n'
         f'---\n\n'
         f'## 参照したクリップ\n\n'
@@ -576,6 +687,14 @@ def write_outputs(clips: list[Clip], body: str) -> None:
             {
                 "generatedAt": datetime.now(ZoneInfo("Asia/Tokyo")).isoformat(),
                 "generator": "deepagents",
+                "coverImage": {
+                    "enabled": GENERATE_COVER_IMAGE,
+                    "path": "cover.png" if cover_prompt else None,
+                    "model": OPENAI_IMAGE_MODEL if cover_prompt else None,
+                    "size": OPENAI_IMAGE_SIZE if cover_prompt else None,
+                    "quality": OPENAI_IMAGE_QUALITY if cover_prompt else None,
+                    "prompt": cover_prompt,
+                },
                 "issues": [
                     {
                         "number": clip.number,
