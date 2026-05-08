@@ -16,6 +16,7 @@ from zoneinfo import ZoneInfo
 
 from bs4 import BeautifulSoup
 from deepagents import create_deep_agent
+from openai import APIStatusError, OpenAI, OpenAIError
 
 
 OWNER_REPO = os.environ.get("GITHUB_REPOSITORY", "ochisamu/ochisamu.info")
@@ -84,6 +85,17 @@ class Clip:
     source_description: str
     source_excerpt: str
     fetch_status: str
+
+
+@dataclass
+class CoverImageResult:
+    enabled: bool
+    path: str | None
+    model: str | None
+    size: str | None
+    quality: str | None
+    prompt: str | None
+    error: str | None
 
 
 def deepagents_model_id() -> str:
@@ -605,27 +617,27 @@ def generate_cover_image(clips: list[Clip], body: str, out_dir: Path, date: str)
     print(f"Image size: {OPENAI_IMAGE_SIZE}")
     print(f"Image quality: {OPENAI_IMAGE_QUALITY}")
 
-    payload = {
-        "model": OPENAI_IMAGE_MODEL,
-        "prompt": prompt,
-        "size": OPENAI_IMAGE_SIZE,
-        "quality": OPENAI_IMAGE_QUALITY,
-        "n": 1,
-    }
-    request = urllib.request.Request(
-        "https://api.openai.com/v1/images/generations",
-        data=json.dumps(payload).encode("utf-8"),
-        method="POST",
-        headers={
-            "Authorization": f"Bearer {OPENAI_API_KEY}",
-            "Content-Type": "application/json",
-        },
-    )
+    client = OpenAI(api_key=OPENAI_API_KEY)
+    try:
+        result = client.images.generate(
+            model=OPENAI_IMAGE_MODEL,
+            prompt=prompt,
+            size=OPENAI_IMAGE_SIZE,
+            quality=OPENAI_IMAGE_QUALITY,
+            n=1,
+            timeout=180,
+        )
+    except APIStatusError as error:
+        body = getattr(error.response, "text", "") or str(error)
+        raise RuntimeError(
+            f"OpenAI image generation failed: {error.status_code} {body}"
+        ) from error
+    except OpenAIError as error:
+        raise RuntimeError(
+            f"OpenAI image generation failed: {error}"
+        ) from error
 
-    with urllib.request.urlopen(request, timeout=180) as response:
-        data = json.loads(response.read().decode("utf-8"))
-
-    image_b64 = (data.get("data") or [{}])[0].get("b64_json")
+    image_b64 = result.data[0].b64_json if result.data else None
     if not image_b64:
         raise RuntimeError("Image generation response did not include b64_json")
 
@@ -644,18 +656,36 @@ def write_outputs(clips: list[Clip], body: str) -> None:
     _, date = jst_date()
     out_dir = output_dir()
     out_dir.mkdir(parents=True, exist_ok=True)
-    cover_prompt = None
+    cover_result = CoverImageResult(
+        enabled=GENERATE_COVER_IMAGE,
+        path=None,
+        model=OPENAI_IMAGE_MODEL if GENERATE_COVER_IMAGE else None,
+        size=OPENAI_IMAGE_SIZE if GENERATE_COVER_IMAGE else None,
+        quality=OPENAI_IMAGE_QUALITY if GENERATE_COVER_IMAGE else None,
+        prompt=None,
+        error=None,
+    )
     cover_markdown = ""
 
     if GENERATE_COVER_IMAGE:
         try:
             cover_prompt = generate_cover_image(clips, body, out_dir, date)
+            cover_result = CoverImageResult(
+                enabled=True,
+                path="cover.png",
+                model=OPENAI_IMAGE_MODEL,
+                size=OPENAI_IMAGE_SIZE,
+                quality=OPENAI_IMAGE_QUALITY,
+                prompt=cover_prompt,
+                error=None,
+            )
             cover_markdown = (
                 f'![今週読んだ技術記事メモ {date} のカバー画像](./cover.png)\n\n'
             )
         except Exception as error:
             print("Cover image generation failed; continuing without cover image")
             print(error)
+            cover_result.error = str(error)
 
     references = "\n".join(
         (
@@ -687,14 +717,7 @@ def write_outputs(clips: list[Clip], body: str) -> None:
             {
                 "generatedAt": datetime.now(ZoneInfo("Asia/Tokyo")).isoformat(),
                 "generator": "deepagents",
-                "coverImage": {
-                    "enabled": GENERATE_COVER_IMAGE,
-                    "path": "cover.png" if cover_prompt else None,
-                    "model": OPENAI_IMAGE_MODEL if cover_prompt else None,
-                    "size": OPENAI_IMAGE_SIZE if cover_prompt else None,
-                    "quality": OPENAI_IMAGE_QUALITY if cover_prompt else None,
-                    "prompt": cover_prompt,
-                },
+                "coverImage": asdict(cover_result),
                 "issues": [
                     {
                         "number": clip.number,
