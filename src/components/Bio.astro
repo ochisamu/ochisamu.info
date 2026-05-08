@@ -5,27 +5,27 @@ import { site } from "../site"
 ---
 
 <aside
-  class="flex max-w-xl items-center gap-4 rounded-2xl border border-slate-200 bg-white/90 p-4 text-slate-900 shadow-2xl shadow-slate-950/10 ring-1 ring-white/60 backdrop-blur"
+  class="flex w-full max-w-xl items-center gap-4 rounded-lg border border-[var(--ink)] bg-[var(--paper-soft)] p-4 text-[var(--ink)] shadow-[4px_4px_0_rgba(24,23,20,0.12)]"
 >
   <Image
-    class="size-14 rounded-full ring-4 ring-white"
+    class="size-14 rounded-lg border border-[var(--rule)] object-cover"
     src={profile}
     width={56}
     height={56}
     alt="Profile picture"
   />
-  <div>
+  <div class="min-w-0">
     <p class="m-0 text-sm font-black">
       <strong>{site.author.name}</strong>
     </p>
-    <p class="m-0 text-sm text-slate-500">{site.author.summary}</p>
+    <p class="m-0 text-sm text-[var(--muted)]">{site.author.summary}</p>
     <p class="mt-2 flex gap-3 text-xs font-bold">
       <a
-        class="text-teal-700 no-underline hover:text-rose-700"
+        class="text-[var(--accent-dark)] no-underline hover:text-[var(--hot)]"
         href={`https://twitter.com/${site.social.twitter}`}>Twitter</a
       >
       <a
-        class="text-teal-700 no-underline hover:text-rose-700"
+        class="text-[var(--accent-dark)] no-underline hover:text-[var(--hot)]"
         href={`https://github.com/${site.social.github}`}>GitHub</a
       >
     </p>

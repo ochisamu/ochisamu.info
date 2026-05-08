@@ -1,6 +1,6 @@
 ---
 import type { BlogPost } from "../utils"
-import { postHref } from "../utils"
+import { postHref, postSlug } from "../utils"
 import EyeCatch from "./EyeCatch.astro"
 import PostMeta from "./PostMeta.astro"
 
@@ -11,28 +11,36 @@ interface Props {
 const { posts } = Astro.props
 ---
 
-<ol class="grid list-none gap-5 p-0 md:grid-cols-2 xl:grid-cols-3">
+<ol class="grid min-w-0 list-none gap-5 p-0 md:grid-cols-2 xl:grid-cols-3">
   {
-    posts.map(post => (
-      <li class="m-0">
+    posts.map((post, index) => (
+      <li class="m-0 min-w-0">
         <article
-          class="group isolate relative grid h-full grid-rows-[auto_1fr] overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition duration-200 hover:-translate-y-1 hover:border-rose-200 hover:shadow-2xl hover:shadow-slate-900/10 focus-within:-translate-y-1 focus-within:border-rose-300 focus-within:shadow-2xl focus-within:shadow-slate-900/10"
+          class="group isolate relative grid h-full min-w-0 grid-rows-[auto_1fr] overflow-hidden rounded-lg border border-[var(--ink)] bg-[var(--paper-soft)] shadow-[5px_5px_0_rgba(24,23,20,0.12)] transition duration-200 hover:-translate-y-1 hover:shadow-[8px_8px_0_rgba(24,23,20,0.16)] focus-within:-translate-y-1 focus-within:shadow-[8px_8px_0_rgba(24,23,20,0.16)]"
           itemscope
           itemtype="http://schema.org/Article"
         >
           <a
-            class="absolute inset-0 z-10 rounded-2xl no-underline outline-none focus-visible:ring-4 focus-visible:ring-rose-300/70"
+            class="absolute inset-0 z-10 rounded-lg no-underline outline-none focus-visible:ring-4 focus-visible:ring-[var(--marker)]"
             href={postHref(post)}
             itemprop="url"
             aria-label={`${post.data.title} を読む`}
           >
             <span class="sr-only">{post.data.title} を読む</span>
           </a>
-          <EyeCatch type="index" tags={post.data.tags} />
+          <EyeCatch
+            type="index"
+            tags={post.data.tags}
+            title={post.data.title}
+            slug={postSlug(post)}
+          />
           <header class="p-5">
-            <h2 class="mb-3 mt-0 text-xl font-black leading-tight tracking-normal text-slate-950">
+            <p class="mb-3 text-xs font-black uppercase tracking-[0.18em] text-[var(--accent-dark)]">
+              Note {String(index + 1).padStart(2, "0")}
+            </p>
+            <h2 class="mb-3 mt-0 font-serif text-lg font-black leading-tight tracking-normal text-[var(--ink)] sm:text-xl">
               <span
-                class="transition group-hover:text-rose-700 group-focus-within:text-rose-700"
+                class="transition group-hover:text-[var(--hot)] group-focus-within:text-[var(--hot)]"
                 itemprop="headline"
               >
                 {post.data.title}
@@ -44,12 +52,12 @@ const { posts } = Astro.props
               tags={post.data.tags}
             />
             {post.data.description && (
-              <p class="mt-4 line-clamp-2 text-sm leading-6 text-slate-600">
+              <p class="mt-4 line-clamp-2 text-sm leading-6 text-[var(--muted)]">
                 {post.data.description}
               </p>
             )}
             <div
-              class="mt-5 inline-flex items-center gap-2 text-sm font-black text-rose-700 transition group-hover:gap-3 group-focus-within:gap-3"
+              class="mt-5 inline-flex items-center gap-2 text-sm font-black text-[var(--hot)] transition group-hover:gap-3 group-focus-within:gap-3"
               aria-hidden="true"
             >
               読む

@@ -11,12 +11,12 @@ interface Props {
 const { date, updated, tags, tone = "light" } = Astro.props
 const metaClass =
   tone === "dark"
-    ? "mb-3 flex flex-wrap gap-3 text-sm font-medium text-slate-300"
-    : "mb-3 flex flex-wrap gap-3 text-sm font-medium text-slate-500"
+    ? "mb-3 flex flex-wrap gap-3 text-sm font-medium text-[#e8e1cf]"
+    : "mb-3 flex flex-wrap gap-3 text-sm font-medium text-[var(--muted)]"
 const tagClass =
   tone === "dark"
-    ? "inline-flex min-h-7 items-center rounded-full border border-white/20 bg-white/10 px-2.5 text-xs font-bold text-white no-underline transition hover:border-teal-200 hover:bg-white/20"
-    : "relative z-20 inline-flex min-h-7 items-center rounded-full border border-slate-200 bg-slate-50 px-2.5 text-xs font-bold text-slate-600 no-underline transition hover:border-rose-200 hover:bg-rose-50 hover:text-rose-700 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-rose-200"
+    ? "inline-flex min-h-7 items-center rounded-md border border-white/25 bg-white/10 px-2.5 text-xs font-bold text-white no-underline transition hover:border-[var(--marker)] hover:bg-white/20"
+    : "relative z-20 inline-flex min-h-7 items-center rounded-md border border-[var(--rule)] bg-[var(--paper)] px-2.5 text-xs font-bold text-[var(--muted)] no-underline transition hover:border-[var(--hot)] hover:bg-[var(--marker)] hover:text-[var(--ink)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--marker)]"
 ---
 
 <div class={metaClass}>

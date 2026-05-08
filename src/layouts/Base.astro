@@ -1,5 +1,6 @@
 ---
 import "@fontsource/noto-sans-jp"
+import "@fontsource/biz-udpmincho"
 import "../styles/global.css"
 import { site } from "../site"
 
@@ -46,30 +47,23 @@ const isTags = Astro.url.pathname.startsWith("/tags")
     />
     <title>{title}</title>
   </head>
-  <body
-    class="min-h-screen overflow-x-hidden bg-slate-50 text-slate-950 antialiased selection:bg-rose-300 selection:text-slate-950"
-  >
+  <body class="min-h-screen overflow-x-hidden text-[var(--ink)] antialiased selection:bg-[var(--marker)] selection:text-[var(--ink)]">
     <a
       class="sr-only focus:not-sr-only focus:fixed focus:left-3 focus:top-3 focus:z-50 focus:rounded-full focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-black focus:text-slate-950 focus:no-underline focus:shadow-xl"
       href="#main-content">本文へ移動</a
     >
-    <div
-      class="fixed inset-0 -z-10 bg-[radial-gradient(circle_at_top_left,rgba(20,184,166,0.18),transparent_30rem),radial-gradient(circle_at_80%_10%,rgba(244,63,94,0.18),transparent_28rem),linear-gradient(180deg,#020617_0%,#0f172a_28rem,#f8fafc_28rem,#f8fafc_100%)]"
-    >
-    </div>
-    <header
-      class="sticky top-0 z-50 border-b border-white/10 bg-slate-950/85 backdrop-blur-xl"
-    >
+    <div class="site-sheet" aria-hidden="true"></div>
+    <header class="sticky top-0 z-50 border-b border-[var(--rule)] bg-[var(--paper)]/90 backdrop-blur-xl">
       <div
-        class="mx-auto flex min-h-16 max-w-6xl items-center justify-between gap-4 px-3"
+        class="mx-auto flex min-h-16 max-w-6xl items-center justify-between gap-4 px-4"
       >
         <a
-          class="inline-flex items-center gap-3 text-lg font-black tracking-normal text-white no-underline sm:text-xl"
+          class="inline-flex items-center gap-3 text-lg font-black tracking-normal text-[var(--ink)] no-underline sm:text-xl"
           href="/"
           aria-label={site.title}
         >
           <span
-            class="grid size-10 place-items-center rounded-xl bg-white text-slate-950 shadow-lg shadow-teal-500/10"
+            class="grid size-10 place-items-center rounded-lg border border-[var(--ink)] bg-[var(--marker)] text-[var(--ink)] shadow-[4px_4px_0_var(--ink)]"
           >
             <img
               src="/cat-solid.png"
@@ -87,36 +81,40 @@ const isTags = Astro.url.pathname.startsWith("/tags")
         >
           <a
             class:list={[
-              "rounded-full px-3 py-2 text-sm font-bold no-underline transition hover:bg-white/10 hover:text-white",
-              isHome ? "bg-white text-slate-950" : "text-slate-300",
+              "rounded-md px-3 py-2 text-sm font-bold no-underline transition hover:bg-[var(--ink)] hover:text-[var(--paper)]",
+              isHome
+                ? "bg-[var(--ink)] text-[var(--paper)]"
+                : "text-[var(--muted)]",
             ]}
             href="/"
             aria-current={isHome ? "page" : undefined}>Articles</a
           >
           <a
             class:list={[
-              "rounded-full px-3 py-2 text-sm font-bold no-underline transition hover:bg-white/10 hover:text-white",
-              isTags ? "bg-white text-slate-950" : "text-slate-300",
+              "rounded-md px-3 py-2 text-sm font-bold no-underline transition hover:bg-[var(--ink)] hover:text-[var(--paper)]",
+              isTags
+                ? "bg-[var(--ink)] text-[var(--paper)]"
+                : "text-[var(--muted)]",
             ]}
             href="/tags/"
             aria-current={isTags ? "page" : undefined}>Tags</a
           >
           <a
-            class="rounded-full px-3 py-2 text-sm font-bold text-slate-300 no-underline transition hover:bg-white/10 hover:text-white max-[420px]:hidden"
+            class="rounded-md px-3 py-2 text-sm font-bold text-[var(--muted)] no-underline transition hover:bg-[var(--ink)] hover:text-[var(--paper)] max-[420px]:hidden"
             href="/rss.xml">RSS</a
           >
         </nav>
       </div>
     </header>
     <div
-      class="mx-auto max-w-6xl px-3 py-10 sm:py-14"
+      class="mx-auto max-w-6xl px-4 py-10 sm:py-14"
       data-is-root-path={Astro.url.pathname === "/"}
     >
       <main id="main-content" tabindex="-1">
         <slot />
       </main>
       <footer
-        class="mx-auto mt-16 flex max-w-3xl flex-wrap justify-between gap-3 border-t border-slate-200 pt-6 text-sm text-slate-500"
+        class="mx-auto mt-16 flex max-w-3xl flex-wrap justify-between gap-3 border-t border-[var(--rule)] pt-6 text-sm text-[var(--muted)]"
       >
         <span>© {new Date().getFullYear()} ochisamu</span>
         <span>Built with <a href="https://astro.build">Astro</a></span>

@@ -42,12 +42,17 @@ const shareText = `${post.data.title} | ochisamu.info`
     itemtype="http://schema.org/Article"
   >
     <header
-      class="mb-6 rounded-2xl bg-white p-3 shadow-2xl shadow-slate-950/10 ring-1 ring-slate-200 sm:mb-8 sm:rounded-3xl sm:p-5"
+      class="mb-8 border-b border-[var(--rule)] pb-8 sm:mb-10"
     >
-      <EyeCatch type="post" tags={post.data.tags} />
-      <div class="px-1 pt-5 sm:px-3 sm:pt-7">
+      <EyeCatch
+        type="post"
+        tags={post.data.tags}
+        title={post.data.title}
+        slug={postSlug(post)}
+      />
+      <div class="border-l-4 border-[var(--ink)] px-4 pt-6 sm:pt-8">
         <h1
-          class="mb-5 text-balance text-3xl font-black leading-tight tracking-normal text-slate-950 sm:text-5xl"
+          class="mb-5 text-balance font-serif text-[2rem] font-black leading-tight tracking-normal text-[var(--ink)] sm:text-5xl"
           itemprop="headline"
         >
           {post.data.title}
@@ -60,14 +65,14 @@ const shareText = `${post.data.title} | ochisamu.info`
       </div>
     </header>
     <section
-      class="article-body rounded-2xl bg-white px-4 py-7 shadow-2xl shadow-slate-950/10 ring-1 ring-slate-200 sm:rounded-3xl sm:px-8 sm:py-8 md:px-10"
+      class="article-body border-b border-[var(--rule)] bg-[var(--paper)]/65 pb-10"
       itemprop="articleBody"
     >
       <Content />
     </section>
-    <section class="mt-4 rounded-2xl bg-white p-4 shadow-2xl shadow-slate-950/10 ring-1 ring-slate-200 sm:mt-5 sm:rounded-3xl sm:p-5">
+    <section class="mt-6 border-b border-[var(--rule)] pb-6">
       <div class="share-toolbar">
-        <h2 class="m-0 text-base font-black text-slate-950">この記事を共有</h2>
+        <h2 class="m-0 text-base font-black text-[var(--ink)]">この記事を共有</h2>
         <button
           type="button"
           class="share-button"
@@ -117,10 +122,19 @@ const shareText = `${post.data.title} | ochisamu.info`
   }
   <div class="mx-auto mt-6 max-w-3xl">
     <a
-      class="inline-flex min-h-11 items-center rounded-full border border-slate-200 bg-white px-4 text-sm font-black text-slate-700 no-underline shadow-sm transition hover:border-rose-200 hover:text-rose-700 hover:shadow-lg"
+      class="inline-flex min-h-11 items-center rounded-md border border-[var(--ink)] bg-[var(--paper-soft)] px-4 text-sm font-black text-[var(--ink)] no-underline shadow-[3px_3px_0_rgba(24,23,20,0.16)] transition hover:-translate-y-0.5 hover:text-[var(--hot)] hover:shadow-[5px_5px_0_rgba(24,23,20,0.2)]"
       href="/">記事一覧へ戻る</a
     >
   </div>
+  <dialog class="image-modal" data-image-modal aria-label="画像の拡大表示">
+    <div class="image-modal-inner">
+      <button class="image-modal-close" type="button" data-image-modal-close>
+        閉じる
+      </button>
+      <img data-image-modal-img src="" alt="" />
+      <p class="image-modal-caption" data-image-modal-caption></p>
+    </div>
+  </dialog>
   {
     hasMermaid && (
       <>
@@ -165,6 +179,58 @@ const shareText = `${post.data.title} | ochisamu.info`
           fallback.removeAttribute("hidden");
           status.textContent = "共有できなかったため、リンクから共有してください。";
         }
+      });
+    })();
+  </script>
+  <script is:inline>
+    (() => {
+      const modal = document.querySelector("[data-image-modal]");
+      const modalImage = document.querySelector("[data-image-modal-img]");
+      const caption = document.querySelector("[data-image-modal-caption]");
+      const closeButton = document.querySelector("[data-image-modal-close]");
+      const article = document.querySelector(".article-body");
+      if (!modal || !modalImage || !caption || !closeButton || !article) return;
+
+      const close = () => {
+        if (modal.open) modal.close();
+        modalImage.removeAttribute("src");
+        modalImage.alt = "";
+        caption.textContent = "";
+      };
+
+      const open = image => {
+        const src = image.currentSrc || image.src;
+        if (!src) return;
+
+        modalImage.src = src;
+        modalImage.alt = image.alt || "";
+        caption.textContent = image.alt || "";
+        caption.hidden = !image.alt;
+        modal.showModal();
+      };
+
+      article.querySelectorAll("img").forEach(image => {
+        image.tabIndex = 0;
+        image.setAttribute("role", "button");
+        image.setAttribute(
+          "aria-label",
+          image.alt ? `${image.alt} を拡大表示` : "画像を拡大表示",
+        );
+
+        image.addEventListener("click", () => open(image));
+        image.addEventListener("keydown", event => {
+          if (event.key !== "Enter" && event.key !== " ") return;
+          event.preventDefault();
+          open(image);
+        });
+      });
+
+      closeButton.addEventListener("click", close);
+      modal.addEventListener("click", event => {
+        if (event.target === modal) close();
+      });
+      modal.addEventListener("close", () => {
+        modalImage.removeAttribute("src");
       });
     })();
   </script>

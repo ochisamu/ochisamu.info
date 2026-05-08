@@ -4,11 +4,47 @@
   --font-sans:
     "Noto Sans JP", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
     sans-serif;
+  --font-serif: "BIZ UDPMincho", "Yu Mincho", "Hiragino Mincho ProN", serif;
 }
 
 @layer base {
+  :root {
+    --paper: #f7f7f0;
+    --paper-soft: #fffdf6;
+    --ink: #181714;
+    --muted: #65645e;
+    --rule: #d8d6c8;
+    --accent: #007c72;
+    --accent-dark: #005c56;
+    --hot: #c2410c;
+    --marker: #f7d95c;
+    --blueprint: #dfe9e6;
+  }
+
+  body {
+    background:
+      linear-gradient(90deg, rgba(0, 124, 114, 0.08) 1px, transparent 1px),
+      linear-gradient(180deg, rgba(194, 65, 12, 0.06) 1px, transparent 1px),
+      linear-gradient(180deg, #eef5f3 0, var(--paper) 18rem, #f9f9f4 100%);
+    background-size:
+      4rem 4rem,
+      4rem 4rem,
+      auto;
+  }
+
+  .site-sheet {
+    position: fixed;
+    inset: 0;
+    z-index: -10;
+    pointer-events: none;
+    background:
+      linear-gradient(90deg, transparent 0, transparent calc(50% - 1px), rgba(24, 23, 20, 0.08) 50%, transparent calc(50% + 1px)),
+      repeating-linear-gradient(135deg, transparent 0 12px, rgba(0, 124, 114, 0.035) 12px 13px);
+    mask-image: linear-gradient(180deg, black 0, black 34rem, transparent 100%);
+  }
+
   a {
-    @apply text-rose-700 underline decoration-rose-300 underline-offset-4 transition hover:text-rose-900;
+    @apply text-[var(--accent-dark)] underline decoration-[var(--marker)] decoration-2 underline-offset-4 transition hover:text-[var(--hot)];
   }
 
   img {
@@ -17,16 +53,25 @@
 
   p {
     @apply tracking-normal;
+    overflow-wrap: anywhere;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    line-break: anywhere;
+    overflow-wrap: anywhere;
   }
 
   hr {
-    @apply my-12 border-0 border-t border-slate-200;
+    @apply my-12 border-0 border-t border-[var(--rule)];
   }
 }
 
 @layer components {
   .article-body {
-    @apply text-slate-700;
+    @apply text-[var(--ink)];
   }
 
   .article-body > :first-child {
@@ -34,7 +79,7 @@
   }
 
   .article-body h2 {
-    @apply mt-10 mb-4 scroll-mt-24 border-b border-slate-200 pb-3 text-2xl font-black leading-tight tracking-normal text-slate-950 sm:mt-12 sm:mb-5 sm:text-3xl;
+    @apply mt-10 mb-4 scroll-mt-24 border-b border-[var(--rule)] pb-3 font-serif text-2xl font-black leading-tight tracking-normal text-[var(--ink)] sm:mt-12 sm:mb-5 sm:text-3xl;
   }
 
   .article-body > h2#目次 {
@@ -42,15 +87,15 @@
   }
 
   .article-body h3 {
-    @apply mt-8 mb-3 scroll-mt-24 text-xl font-black leading-tight tracking-normal text-slate-900 sm:mt-9 sm:mb-4 sm:text-2xl;
+    @apply mt-8 mb-3 scroll-mt-24 text-xl font-black leading-tight tracking-normal text-[var(--ink)] sm:mt-9 sm:mb-4 sm:text-2xl;
   }
 
   .article-body h4 {
-    @apply mt-7 mb-3 text-xl font-black text-slate-900;
+    @apply mt-7 mb-3 text-xl font-black text-[var(--ink)];
   }
 
   .article-body p {
-    @apply mb-5 leading-8 sm:mb-6;
+    @apply mb-5 leading-8 text-[1.02rem] sm:mb-6;
   }
 
   .article-body ul,
@@ -68,24 +113,25 @@
   }
 
   .article-body blockquote {
-    @apply my-8 rounded-r-2xl border-l-4 border-rose-600 bg-rose-50 px-5 py-4 text-slate-600;
+    @apply my-8 rounded-r-lg border-l-4 border-[var(--hot)] bg-[var(--paper-soft)] px-5 py-4 text-[var(--muted)];
   }
 
   .article-body table {
-    @apply my-8 w-full overflow-hidden rounded-xl border border-slate-200 text-sm;
+    @apply my-8 w-full overflow-hidden rounded-lg border border-[var(--rule)] text-sm;
   }
 
   .article-body th,
   .article-body td {
-    @apply border-b border-slate-200 px-4 py-3 text-left;
+    @apply border-b border-[var(--rule)] px-4 py-3 text-left;
   }
 
   .article-body th {
-    @apply bg-slate-50 font-black text-slate-950;
+    @apply bg-[var(--blueprint)] font-black text-[var(--ink)];
   }
 
   .article-body img {
-    @apply my-6 rounded-xl shadow-2xl shadow-slate-950/10 sm:my-8 sm:rounded-2xl;
+    @apply my-6 rounded-lg border border-[var(--rule)] shadow-[6px_6px_0_rgba(24,23,20,0.12)] transition hover:-translate-y-0.5 hover:shadow-[8px_8px_0_rgba(24,23,20,0.16)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--marker)] sm:my-8;
+    cursor: zoom-in;
   }
 
   .image-grid {
@@ -101,16 +147,16 @@
   }
 
   .article-body :not(pre) > code {
-    @apply rounded-md bg-slate-100 px-1.5 py-0.5 text-[0.9em] font-semibold text-rose-700;
+    @apply rounded bg-[var(--blueprint)] px-1.5 py-0.5 text-[0.9em] font-semibold text-[var(--accent-dark)];
   }
 
   .toc {
-    @apply my-6 rounded-2xl border border-slate-200 bg-slate-50 p-4 shadow-sm sm:my-8 sm:p-5;
+    @apply my-6 rounded-lg border border-[var(--rule)] bg-[var(--paper-soft)] p-4 shadow-[4px_4px_0_rgba(24,23,20,0.08)] sm:my-8 sm:p-5;
   }
 
   .toc::before {
     content: "目次";
-    @apply mb-3 block text-sm font-black text-slate-950;
+    @apply mb-3 block text-sm font-black text-[var(--ink)];
   }
 
   .toc ol {
@@ -122,7 +168,7 @@
   }
 
   .toc a {
-    @apply text-sm font-bold text-slate-600 no-underline hover:text-rose-700;
+    @apply text-sm font-bold text-[var(--muted)] no-underline hover:text-[var(--hot)];
   }
 
   .toc-depth-2 {
@@ -134,23 +180,23 @@
   }
 
   .code-block {
-    @apply my-8 overflow-hidden rounded-2xl border border-slate-800 bg-slate-950 shadow-2xl shadow-slate-950/20;
+    @apply my-8 overflow-hidden rounded-lg border border-[var(--ink)] bg-[#10100e] shadow-[6px_6px_0_rgba(24,23,20,0.18)];
   }
 
   .code-toolbar {
-    @apply flex min-h-11 items-center justify-between gap-4 border-b border-slate-800 bg-slate-900 px-3 py-2;
+    @apply flex min-h-11 items-center justify-between gap-4 border-b border-[#34332d] bg-[#181714] px-3 py-2;
   }
 
   .code-label {
-    @apply min-w-0 overflow-hidden text-ellipsis whitespace-nowrap text-xs font-black text-slate-300;
+    @apply min-w-0 overflow-hidden text-ellipsis whitespace-nowrap text-xs font-black text-[#dedbd0];
   }
 
   .code-copy {
-    @apply min-h-8 rounded-full border border-slate-700 bg-slate-800 px-3 text-xs font-black text-slate-100 transition hover:border-slate-500 hover:bg-slate-700;
+    @apply min-h-8 rounded-md border border-[#5a574c] bg-[#24231f] px-3 text-xs font-black text-[#f8f5e8] transition hover:border-[var(--marker)] hover:bg-[#302f29];
   }
 
   .astro-code {
-    @apply m-0 overflow-auto rounded-none !bg-slate-950 p-5 text-sm leading-7;
+    @apply m-0 overflow-auto rounded-none !bg-[#10100e] p-5 text-sm leading-7;
   }
 
   .astro-code code {
@@ -158,11 +204,11 @@
   }
 
   pre:not(.astro-code):not(.mermaid) {
-    @apply my-8 overflow-auto rounded-2xl bg-slate-950 p-5 text-sm leading-7 text-slate-100;
+    @apply my-8 overflow-auto rounded-lg bg-[#10100e] p-5 text-sm leading-7 text-[#f8f5e8];
   }
 
   .mermaid {
-    @apply my-8 overflow-auto rounded-2xl border border-slate-200 bg-white p-5 shadow-lg shadow-slate-950/5;
+    @apply my-8 overflow-auto rounded-lg border border-[var(--rule)] bg-[var(--paper-soft)] p-5 shadow-[4px_4px_0_rgba(24,23,20,0.08)];
   }
 
   nav.mx-auto li {
@@ -170,7 +216,7 @@
   }
 
   nav.mx-auto a[rel] {
-    @apply flex min-h-16 items-center rounded-2xl border border-slate-200 bg-white px-4 py-3 font-black text-slate-950 no-underline shadow-sm transition hover:border-rose-200 hover:text-rose-700 hover:shadow-xl hover:shadow-slate-950/10;
+    @apply flex min-h-16 items-center rounded-lg border border-[var(--rule)] bg-[var(--paper-soft)] px-4 py-3 font-black text-[var(--ink)] no-underline shadow-sm transition hover:-translate-y-0.5 hover:border-[var(--hot)] hover:text-[var(--hot)] hover:shadow-[4px_4px_0_rgba(24,23,20,0.12)];
   }
 
   nav.mx-auto li:last-child a[rel] {
@@ -182,11 +228,11 @@
   }
 
   .share-button {
-    @apply inline-flex min-h-11 items-center rounded-full border border-slate-200 bg-white px-4 text-sm font-black text-slate-700 no-underline shadow-sm transition hover:border-rose-200 hover:text-rose-700 hover:shadow-lg;
+    @apply inline-flex min-h-11 items-center rounded-md border border-[var(--ink)] bg-[var(--marker)] px-4 text-sm font-black text-[var(--ink)] no-underline shadow-[3px_3px_0_var(--ink)] transition hover:-translate-y-0.5 hover:shadow-[5px_5px_0_var(--ink)];
   }
 
   .share-status {
-    @apply mt-2 mb-0 text-sm font-bold text-slate-600;
+    @apply mt-2 mb-0 text-sm font-bold text-[var(--muted)];
     min-height: 1.5rem;
   }
 
@@ -196,5 +242,32 @@
 
   .share-fallback-links a {
     @apply text-sm font-black;
+  }
+
+  .image-modal {
+    @apply fixed inset-0 m-auto max-h-[92vh] w-[min(92vw,72rem)] overflow-visible border-0 bg-transparent p-0 text-[var(--ink)];
+  }
+
+  .image-modal::backdrop {
+    background:
+      radial-gradient(circle at 50% 20%, rgba(247, 217, 92, 0.2), transparent 22rem),
+      rgba(24, 23, 20, 0.78);
+    backdrop-filter: blur(6px);
+  }
+
+  .image-modal-inner {
+    @apply relative rounded-lg border border-[var(--ink)] bg-[var(--paper-soft)] p-3 shadow-[8px_8px_0_rgba(0,0,0,0.35)] sm:p-4;
+  }
+
+  .image-modal img {
+    @apply mx-auto max-h-[78vh] w-auto rounded-md border border-[var(--rule)] object-contain;
+  }
+
+  .image-modal-close {
+    @apply absolute right-3 top-3 z-10 inline-flex min-h-10 items-center rounded-md border border-[var(--ink)] bg-[var(--marker)] px-3 text-sm font-black text-[var(--ink)] shadow-[3px_3px_0_var(--ink)] transition hover:-translate-y-0.5 hover:shadow-[5px_5px_0_var(--ink)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/70;
+  }
+
+  .image-modal-caption {
+    @apply mt-3 mb-0 text-sm font-bold leading-6 text-[var(--muted)];
   }
 }

@@ -1,70 +1,516 @@
 ---
+import {
+  faAtom,
+  faCodeBranch,
+  faDiagramProject,
+  faFileLines,
+  faKeyboard,
+  faNewspaper,
+  faRobot,
+  faTerminal,
+} from "@fortawesome/free-solid-svg-icons"
+
 interface Props {
   type?: "index" | "post"
   tags: string[]
+  title?: string
+  slug?: string
 }
 
-const { type = "post", tags } = Astro.props
+const { type = "post", tags, title = "Technical note", slug = "" } = Astro.props
 const isIndex = type === "index"
-const isGatsby = tags.includes("Gatsby")
-const isKeyboard = tags.includes("Keyboard")
-const kind = isGatsby ? "gatsby" : isKeyboard ? "keyboard" : "default"
-const background =
-  kind === "keyboard"
-    ? "from-indigo-100 via-slate-100 to-violet-100 text-indigo-800"
-    : kind === "gatsby"
-      ? "from-cyan-100 via-sky-100 to-teal-100 text-cyan-800"
-      : "from-rose-100 via-pink-50 to-orange-100 text-rose-800"
+
+const hashText = (value: string) => {
+  let hash = 2166136261
+  for (const char of value) {
+    hash ^= char.codePointAt(0) ?? 0
+    hash = Math.imul(hash, 16777619)
+  }
+  return hash >>> 0
+}
+
+const hasTag = (value: string) =>
+  tags.some(tag => tag.toLowerCase() === value.toLowerCase())
+
+const seed = hashText(`${slug}:${title}:${tags.join(",")}`)
+const variant = seed % 6
+const angle = -18 + (seed % 37)
+const panelX = 8 + (seed % 38)
+const panelY = 9 + ((seed >> 4) % 34)
+const lineCount = 5 + (seed % 7)
+
+const visualKind = hasTag("Keyboard")
+  ? "keyboard"
+  : hasTag("AI")
+    ? "ai"
+    : hasTag("GitHub Actions")
+      ? "actions"
+      : hasTag("Tech Clips")
+        ? "clips"
+        : hasTag("Mermaid.js") || hasTag("Mermaid")
+          ? "diagram"
+          : hasTag("Gatsby")
+            ? "gatsby"
+            : "default"
+
+const themes = {
+  keyboard: {
+    label: "Keyboard",
+    icon: faKeyboard,
+    bg: "#e5ecdf",
+    paper: "#f8f4df",
+    ink: "#324018",
+    accent: "#6c7d2d",
+    hot: "#c2410c",
+  },
+  ai: {
+    label: "AI",
+    icon: faRobot,
+    bg: "#dfe9e6",
+    paper: "#f8f7eb",
+    ink: "#123f3c",
+    accent: "#007c72",
+    hot: "#9a3412",
+  },
+  actions: {
+    label: "Actions",
+    icon: faCodeBranch,
+    bg: "#e0e7f1",
+    paper: "#fbf7e8",
+    ink: "#213553",
+    accent: "#365f91",
+    hot: "#b45309",
+  },
+  clips: {
+    label: "Clips",
+    icon: faNewspaper,
+    bg: "#f7ead3",
+    paper: "#fffaf0",
+    ink: "#4f2d16",
+    accent: "#a13b18",
+    hot: "#007c72",
+  },
+  diagram: {
+    label: "Diagram",
+    icon: faDiagramProject,
+    bg: "#e7e2ef",
+    paper: "#fbf8ef",
+    ink: "#3b2a55",
+    accent: "#705199",
+    hot: "#c2410c",
+  },
+  gatsby: {
+    label: "Gatsby",
+    icon: faAtom,
+    bg: "#dceef0",
+    paper: "#f7f8e9",
+    ink: "#005d6b",
+    accent: "#008394",
+    hot: "#9a3412",
+  },
+  default: {
+    label: "Note",
+    icon: faFileLines,
+    bg: "#f1eadc",
+    paper: "#fffdf6",
+    ink: "#181714",
+    accent: "#007c72",
+    hot: "#c2410c",
+  },
+}
+
+const theme = themes[visualKind]
+const icon = theme.icon.icon
+const iconPaths = Array.isArray(icon[4]) ? icon[4] : [icon[4]]
+const shortTitle = title.length > 30 ? `${title.slice(0, 30)}...` : title
+const styleVars = [
+  `--ec-bg:${theme.bg}`,
+  `--ec-paper:${theme.paper}`,
+  `--ec-ink:${theme.ink}`,
+  `--ec-accent:${theme.accent}`,
+  `--ec-hot:${theme.hot}`,
+  `--ec-angle:${angle}deg`,
+  `--ec-panel-x:${panelX}%`,
+  `--ec-panel-y:${panelY}%`,
+].join(";")
+
+const lineSegments = Array.from({ length: lineCount }, (_, index) => {
+  const local = seed + index * 131
+  return {
+    width: 16 + (local % 28),
+    left: 6 + ((local >> 3) % 74),
+    top: 14 + ((local >> 7) % 68),
+    rotate: -24 + ((local >> 11) % 49),
+  }
+})
+
+const keys = Array.from({ length: 12 }, (_, index) => {
+  const local = seed + index * 41
+  return {
+    opacity: 0.18 + ((local % 7) * 0.04),
+  }
+})
 ---
 
 <div
   class:list={[
-    "grid place-items-center bg-gradient-to-br",
-    background,
-    isIndex
-      ? "aspect-[16/10] w-full"
-      : "min-h-44 w-full rounded-xl sm:min-h-60 sm:rounded-2xl",
+    "eye-catch",
+    `eye-catch-${visualKind}`,
+    `eye-catch-variant-${variant}`,
+    isIndex ? "eye-catch-index" : "eye-catch-post",
   ]}
+  style={styleVars}
 >
+  <div class="eye-catch-grid" aria-hidden="true"></div>
+  <div class="eye-catch-sun" aria-hidden="true"></div>
+  <div class="eye-catch-diagonal" aria-hidden="true"></div>
+  <div class="eye-catch-lines" aria-hidden="true">
+    {
+      lineSegments.map(segment => (
+        <span
+          style={`--line-w:${segment.width}%;--line-x:${segment.left}%;--line-y:${segment.top}%;--line-r:${segment.rotate}deg`}
+        />
+      ))
+    }
+  </div>
   {
-    kind === "keyboard" ? (
-      <svg
-        class:list={[
-          isIndex ? "size-14" : "size-20 sm:size-28",
-          "fill-none stroke-current stroke-[1.8]",
-        ]}
-        aria-hidden="true"
-        viewBox="0 0 24 24"
-      >
-        <path d="M4 7.5h16v9H4z" />
-        <path d="M7 10h.01M10 10h.01M13 10h.01M16 10h.01M7 13h10" />
-      </svg>
-    ) : kind === "gatsby" ? (
-      <svg
-        class:list={[
-          isIndex ? "size-14" : "size-20 sm:size-28",
-          "fill-none stroke-current stroke-[1.8]",
-        ]}
-        aria-hidden="true"
-        viewBox="0 0 24 24"
-      >
-        <circle cx="12" cy="12" r="2.2" />
-        <path d="M12 4.5c4.8 0 8.7 3.4 8.7 7.5s-3.9 7.5-8.7 7.5S3.3 16.1 3.3 12 7.2 4.5 12 4.5Z" />
-        <path d="M5.5 8.3c2.4-4.2 7.5-5.9 11.1-3.8 3.6 2.1 4.4 7.3 2 11.5s-7.5 5.9-11.1 3.8c-3.6-2.1-4.4-7.3-2-11.5Z" />
-        <path d="M18.5 8.3c2.4 4.2 1.6 9.4-2 11.5-3.6 2.1-8.7.4-11.1-3.8s-1.6-9.4 2-11.5c3.6-2.1 8.7-.4 11.1 3.8Z" />
-      </svg>
-    ) : (
-      <svg
-        class:list={[
-          isIndex ? "size-14" : "size-20 sm:size-28",
-          "fill-none stroke-current stroke-[1.8]",
-        ]}
-        aria-hidden="true"
-        viewBox="0 0 24 24"
-      >
-        <path d="M7 8.5h10M7 12h7M7 15.5h5" />
-        <path d="M5.5 3.5h13a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2v-13a2 2 0 0 1 2-2Z" />
-      </svg>
+    visualKind === "keyboard" && (
+      <div class="eye-catch-keys" aria-hidden="true">
+        {keys.map(key => <span style={`--key-o:${key.opacity}`} />)}
+      </div>
     )
   }
+  <div class="eye-catch-card" aria-hidden="true">
+    <span class="eye-catch-corner eye-catch-corner-tl"></span>
+    <span class="eye-catch-corner eye-catch-corner-br"></span>
+    <div class="eye-catch-icon-plate">
+      <svg
+        class="eye-catch-icon"
+        viewBox={`0 0 ${icon[0]} ${icon[1]}`}
+      >
+        {iconPaths.map(path => <path d={path} />)}
+      </svg>
+    </div>
+    <div class="eye-catch-copy">
+      <p class="eye-catch-kicker">{theme.label}</p>
+      <p class="eye-catch-title">{shortTitle}</p>
+    </div>
+  </div>
+  <div class="eye-catch-terminal" aria-hidden="true">
+    <svg viewBox={`0 0 ${faTerminal.icon[0]} ${faTerminal.icon[1]}`}>
+      <path d={faTerminal.icon[4]} />
+    </svg>
+    <span>build / publish / note</span>
+  </div>
 </div>
+
+<style>
+  .eye-catch {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    display: grid;
+    place-items: center;
+    color: var(--ec-ink);
+    background:
+      radial-gradient(circle at var(--ec-panel-x) var(--ec-panel-y), color-mix(in srgb, var(--ec-hot) 26%, transparent), transparent 18rem),
+      linear-gradient(135deg, transparent 0, transparent 47%, color-mix(in srgb, var(--ec-ink) 10%, transparent) 47%, color-mix(in srgb, var(--ec-ink) 10%, transparent) 48%, transparent 48%),
+      repeating-linear-gradient(90deg, color-mix(in srgb, white 46%, transparent) 0 1px, transparent 1px 1.15rem),
+      var(--ec-bg);
+  }
+
+  .eye-catch-index {
+    aspect-ratio: 16 / 10;
+    width: 100%;
+  }
+
+  .eye-catch-post {
+    min-height: 11rem;
+    width: 100%;
+    border: 1px solid var(--rule);
+    border-radius: 0.5rem;
+  }
+
+  @media (min-width: 640px) {
+    .eye-catch-post {
+      min-height: 15rem;
+    }
+  }
+
+  .eye-catch-grid,
+  .eye-catch-diagonal,
+  .eye-catch-sun,
+  .eye-catch-lines,
+  .eye-catch-keys {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .eye-catch-grid {
+    z-index: -3;
+    background:
+      linear-gradient(90deg, color-mix(in srgb, var(--ec-accent) 16%, transparent) 1px, transparent 1px),
+      linear-gradient(180deg, color-mix(in srgb, var(--ec-hot) 12%, transparent) 1px, transparent 1px);
+    background-size: 3.5rem 3.5rem;
+    opacity: 0.55;
+  }
+
+  .eye-catch-sun {
+    z-index: -2;
+    width: 11rem;
+    height: 11rem;
+    left: calc(var(--ec-panel-x) - 5.5rem);
+    top: calc(var(--ec-panel-y) - 5.5rem);
+    border: 1px solid color-mix(in srgb, var(--ec-hot) 34%, transparent);
+    border-radius: 999px;
+    background: repeating-linear-gradient(
+      var(--ec-angle),
+      color-mix(in srgb, var(--ec-paper) 60%, transparent) 0 0.45rem,
+      transparent 0.45rem 0.9rem
+    );
+    opacity: 0.75;
+  }
+
+  .eye-catch-diagonal {
+    z-index: -1;
+    transform: rotate(var(--ec-angle));
+    background: linear-gradient(
+      90deg,
+      transparent 0 33%,
+      color-mix(in srgb, var(--ec-ink) 12%, transparent) 33% 34%,
+      transparent 34% 66%,
+      color-mix(in srgb, var(--ec-accent) 18%, transparent) 66% 67%,
+      transparent 67%
+    );
+    opacity: 0.8;
+  }
+
+  .eye-catch-lines span {
+    position: absolute;
+    left: var(--line-x);
+    top: var(--line-y);
+    width: var(--line-w);
+    height: 2px;
+    transform: rotate(var(--line-r));
+    transform-origin: left center;
+    background: color-mix(in srgb, var(--ec-accent) 45%, transparent);
+  }
+
+  .eye-catch-card {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    min-width: min(78%, 24rem);
+    max-width: min(86%, 31rem);
+    align-items: center;
+    gap: 0.95rem;
+    border: 1px solid color-mix(in srgb, var(--ec-ink) 72%, transparent);
+    border-radius: 0.6rem;
+    background:
+      linear-gradient(135deg, color-mix(in srgb, white 52%, transparent), transparent 46%),
+      linear-gradient(180deg, color-mix(in srgb, var(--ec-paper) 94%, transparent), color-mix(in srgb, var(--ec-bg) 58%, var(--ec-paper)));
+    padding: 0.9rem 1rem;
+    box-shadow:
+      0 1px 0 color-mix(in srgb, white 70%, transparent) inset,
+      6px 6px 0 color-mix(in srgb, var(--ec-ink) 18%, transparent),
+      0 18px 34px color-mix(in srgb, var(--ec-ink) 13%, transparent);
+    transform: rotate(calc(var(--ec-angle) * 0.08));
+  }
+
+  .eye-catch-card::before {
+    content: "";
+    position: absolute;
+    inset: 0.45rem;
+    z-index: -1;
+    border: 1px dashed color-mix(in srgb, var(--ec-accent) 26%, transparent);
+    border-radius: 0.35rem;
+  }
+
+  .eye-catch-card::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 0.38rem;
+    border-radius: 0 0 0.55rem 0.55rem;
+    background: linear-gradient(90deg, var(--ec-accent), var(--ec-hot));
+    opacity: 0.9;
+  }
+
+  .eye-catch-corner {
+    position: absolute;
+    width: 1.2rem;
+    height: 1.2rem;
+    border-color: var(--ec-hot);
+    opacity: 0.9;
+  }
+
+  .eye-catch-corner-tl {
+    top: -0.28rem;
+    left: -0.28rem;
+    border-top: 3px solid;
+    border-left: 3px solid;
+  }
+
+  .eye-catch-corner-br {
+    right: -0.28rem;
+    bottom: -0.28rem;
+    border-right: 3px solid;
+    border-bottom: 3px solid;
+  }
+
+  .eye-catch-icon-plate {
+    display: grid;
+    width: clamp(4.1rem, 8vw, 6.2rem);
+    aspect-ratio: 1;
+    place-items: center;
+    border: 1px solid color-mix(in srgb, var(--ec-ink) 68%, transparent);
+    border-radius: 0.55rem;
+    background:
+      radial-gradient(circle at 32% 28%, color-mix(in srgb, white 74%, transparent), transparent 42%),
+      color-mix(in srgb, var(--ec-ink) 92%, black);
+    box-shadow:
+      3px 3px 0 color-mix(in srgb, var(--ec-hot) 26%, transparent),
+      0 0 0 0.35rem color-mix(in srgb, var(--ec-paper) 72%, transparent);
+  }
+
+  .eye-catch-icon {
+    width: 58%;
+    height: 58%;
+    fill: color-mix(in srgb, var(--ec-paper) 92%, white);
+    filter: drop-shadow(0 2px 0 color-mix(in srgb, black 34%, transparent));
+  }
+
+  .eye-catch-copy {
+    min-width: 0;
+    text-align: left;
+  }
+
+  .eye-catch-kicker,
+  .eye-catch-title,
+  .eye-catch-terminal {
+    margin: 0;
+    font-weight: 900;
+    line-break: anywhere;
+  }
+
+  .eye-catch-kicker {
+    color: var(--ec-hot);
+    font-size: 0.7rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  .eye-catch-title {
+    max-width: 100%;
+    color: var(--ec-ink);
+    font-family: var(--font-serif);
+    font-size: clamp(0.92rem, 2.2vw, 1.35rem);
+    line-height: 1.35;
+    text-align: left;
+  }
+
+  .eye-catch-terminal {
+    position: absolute;
+    left: 0.8rem;
+    bottom: 0.75rem;
+    z-index: 2;
+    display: flex;
+    max-width: min(48%, 14rem);
+    align-items: center;
+    gap: 0.45rem;
+    color: color-mix(in srgb, var(--ec-ink) 72%, transparent);
+    font-size: 0.68rem;
+  }
+
+  .eye-catch-terminal svg {
+    width: 0.9rem;
+    height: 0.9rem;
+    flex: 0 0 auto;
+    fill: var(--ec-accent);
+  }
+
+  .eye-catch-terminal span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .eye-catch-keys {
+    z-index: 1;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 0.45rem;
+    width: 44%;
+    height: 34%;
+    left: 7%;
+    top: 12%;
+    opacity: 0.9;
+  }
+
+  .eye-catch-keys span {
+    border: 1px solid color-mix(in srgb, var(--ec-ink) 34%, transparent);
+    border-radius: 0.22rem;
+    background: color-mix(in srgb, var(--ec-paper) 70%, transparent);
+    opacity: var(--key-o);
+  }
+
+  .eye-catch-variant-1 .eye-catch-card {
+    transform: translateX(-5%) rotate(calc(var(--ec-angle) * -0.07));
+  }
+
+  .eye-catch-variant-2 .eye-catch-card {
+    transform: translateX(6%) rotate(calc(var(--ec-angle) * 0.06));
+  }
+
+  .eye-catch-variant-3 .eye-catch-card {
+    border-radius: 0.95rem 0.35rem 0.95rem 0.35rem;
+  }
+
+  .eye-catch-variant-4 .eye-catch-card {
+    justify-items: start;
+    text-align: left;
+  }
+
+  .eye-catch-variant-4 .eye-catch-title {
+    text-align: left;
+  }
+
+  .eye-catch-variant-5 .eye-catch-card {
+    box-shadow:
+      5px 5px 0 color-mix(in srgb, var(--ec-ink) 16%, transparent),
+      -5px -5px 0 color-mix(in srgb, var(--ec-hot) 14%, transparent);
+  }
+
+  @media (max-width: 520px) {
+    .eye-catch-card {
+      grid-template-columns: 1fr;
+      width: 42%;
+      min-width: 8rem;
+      max-width: 11rem;
+      justify-items: center;
+      gap: 0.45rem;
+      padding: 0.85rem;
+      transform: none !important;
+    }
+
+    .eye-catch-icon-plate {
+      width: 4.1rem;
+    }
+
+    .eye-catch-copy {
+      text-align: center;
+    }
+
+    .eye-catch-title {
+      display: none;
+    }
+
+    .eye-catch-terminal {
+      display: none;
+    }
+  }
+</style>

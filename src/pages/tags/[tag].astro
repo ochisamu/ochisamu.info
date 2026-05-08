@@ -23,8 +23,13 @@ const posts = (await getCollection("blog"))
   <div class="mb-10">
     <Bio />
   </div>
-  <h1 class="mb-8 text-3xl font-black text-white sm:text-5xl">
-    {tag} ({posts.length}件)
-  </h1>
+  <section class="mb-8 border-l-4 border-[var(--ink)] pl-5">
+    <p class="mb-3 text-xs font-black uppercase tracking-[0.18em] text-[var(--accent-dark)]">
+      Tagged notes
+    </p>
+    <h1 class="font-serif text-3xl font-black text-[var(--ink)] sm:text-5xl">
+      {tag} ({posts.length}件)
+    </h1>
+  </section>
   <PostList posts={posts} />
 </Base>

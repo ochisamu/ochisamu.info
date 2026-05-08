@@ -9,19 +9,17 @@ const posts = (await getCollection("blog")).sort(byDateDesc)
 ---
 
 <Base title="All posts">
-  <section class="mb-10 max-w-4xl py-5 text-white">
-    <p
-      class="mb-4 text-xs font-black uppercase tracking-[0.18em] text-teal-200"
-    >
-      Tech notes
+  <section
+    class="mb-8 max-w-3xl border-l-4 border-[var(--ink)] py-3 pl-5 sm:mb-10"
+  >
+    <p class="mb-3 text-xs font-black uppercase tracking-[0.18em] text-[var(--accent-dark)]">
+      Recent notes
     </p>
-    <h1
-      class="mb-5 text-balance text-4xl font-black leading-tight tracking-normal sm:text-6xl"
-    >
-      ネットワーク、サーバ、機械学習のメモ
+    <h1 class="mb-3 text-balance font-serif text-3xl font-black leading-tight tracking-normal text-[var(--ink)] sm:text-4xl">
+      読んだ記事、試したこと、あとで見返すメモ
     </h1>
-    <p class="max-w-2xl text-lg leading-8 text-slate-300">
-      検証ログや設定メモを、あとから読み返しやすい形で残しています。
+    <p class="max-w-2xl text-base leading-7 text-[var(--muted)] sm:text-lg">
+      週次 Tech Clips、開発ログ、自作キーボードまわりの記録を短く残しています。
     </p>
   </section>
   <div class="mb-10">
