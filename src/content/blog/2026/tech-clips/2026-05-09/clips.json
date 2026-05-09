@@ -1,0 +1,27 @@
+{
+  "generatedAt": "2026-05-09T14:34:56.398160+09:00",
+  "generator": "deepagents",
+  "coverImage": {
+    "enabled": true,
+    "path": "cover.png",
+    "model": "gpt-image-2",
+    "size": "1536x1024",
+    "quality": "high",
+    "prompt": "Create a landscape editorial cover illustration for a Japanese personal\n        technical blog weekly roundup.\n\n        Article date: 2026-05-09\n        Main topics:\n        [\n  \"Claude Code の WebFetch は全文読解ではないことがある\",\n  \"Codex は SDK と App Server で役割がかなり違う\"\n]\n\n        Author notes:\n        [\n  \"Web fetch奥が深い\",\n  \"Codex App Server知らなかった。個人用のLLMアプリで重課金気にせず使えるのいいね。OpenAI APIは情報提供による無料枠でも十分遊べるけどこれはCodexのハーネスそのまま使えるのが大きい\"\n]\n\n        Visual direction:\n        - Japanese technical notebook / field note cover.\n        - Abstract diagram about saved web articles becoming a reviewed blog post.\n        - Include visual motifs such as clipped notes, GitHub issue cards, workflow\n          arrows, small terminal panels, browser/article sheets, and AI-assisted\n          editing as abstract shapes.\n        - Use the site's palette: warm paper, black ink, teal, rust orange, and a\n          small yellow accent.\n        - Clean editorial composition, subtle grid paper texture, crisp vector-like\n          shapes, production-quality blog cover.\n\n        Hard constraints:\n        - No readable text, no Japanese text, no English words, no logos.\n        - Do not reproduce screenshots, product UIs, website layouts, or brand marks.\n        - Do not include people, faces, mascots, or photorealistic devices.\n        - The result should work as an article image, not an advertisement.",
+    "error": null
+  },
+  "issues": [
+    {
+      "number": 35,
+      "issueUrl": "https://github.com/ochisamu/ochisamu.info/issues/35",
+      "sourceUrl": "https://zenn.dev/zhizhiarv/articles/claude-code-webfetch-haiku-summary",
+      "fetchStatus": "ok"
+    },
+    {
+      "number": 32,
+      "issueUrl": "https://github.com/ochisamu/ochisamu.info/issues/32",
+      "sourceUrl": "https://zenn.dev/kun432/scraps/9fe862943fb00e",
+      "fetchStatus": "ok"
+    }
+  ]
+}
