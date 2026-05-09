@@ -1,0 +1,27 @@
+{
+  "generatedAt": "2026-05-09T21:43:19.686251+09:00",
+  "generator": "deepagents",
+  "coverImage": {
+    "enabled": true,
+    "path": "cover.png",
+    "model": "gpt-image-2",
+    "size": "1536x1024",
+    "quality": "high",
+    "prompt": "Create a landscape editorial cover illustration for a Japanese personal\n        technical blog weekly roundup. The image should focus on the technical\n        articles that were read, not on the act of collecting or summarizing them.\n\n        Visual source notes:\n        ## 記事1\n- **title**: あなたのClaude CodeのWebFetch、実はWebをちゃんと読んでいない  \n- **central theme**: Claude Code の WebFetch は見かけの取得量とは別に、小さいモデルの要約や truncate によって「実際に読んだ内容」が変わる。  \n- **visualizable technical motifs**（2-4）  \n  1) **Fetchログの錯覚**：「Received 204.4KB (200 OK)」表示 vs 内部で **要約返却**  \n  2) **バイパス判定フロー**（条件3つのチェック）＋ trusted domains / Content-Type / 10万文字  \n  3) **truncation**（上限10MiB、先頭1MiB→markdown変換、さらに10万文字で切断）  \n  4) **要約経由の一次情報劣化**（英語ハードコードされた指示→要約が英語で返る等の挙動）  \n- **Japanese labels**（1-3）  \n  - 「WebFetchは要約を読む」  \n  - 「truncate/バイパス条件」  \n  - 「一次情報は別経路」  \n- **1 thing to avoid misrepresenting**: 「常に要約だけが返る」と断定すること（記事では条件によりバイパスされる場合があると明記）。\n\n## 記事2\n- **title**: 「Codex App Server」を試す  \n- **central theme**: Codex App Server は、Codex ハーネスを多様なクライアントへ繋ぐための JSON-RPC(stdio)ブリッジで、UI統合向けに設計されている。  \n- **visualizable technical motifs**（2-4）  \n  1) **JSON-RPC over stdio** の概念図（クライアント ⇄ App Server）  \n  2) **プリミティブ**「Item / Turn / Thread」3レイヤ（イベントストリーミングの骨格）  \n  3) **承認フロー**（tool実行前の許可UI→実行→結果）を表すダイアグラム  \n  4) **統合先の例**（VS Code拡張 / Web / CLI / SDKとの差の整理）  \n- **Japanese labels**（1-3）  \n  - 「Item / Turn / Thread」  \n  - 「JSON-RPC（stdio）」  \n  - 「承認フロー」  \n- **1 thing to avoid misrepresenting**: App Server を「自動化/CI専用」と誤解させること（記事では CI/CD は SDK / codex exec 等が推奨寄りで、App Server は UI 統合向け）。\n\n---\n\n## combined cover concept\nAI ツールの「読み取ったように見える処理」と「統合の層」を対比するカバーにする。片側は Claude Code WebFetch の **Fetchログの錯覚**と **要約/ truncate/バイパス条件**を、もう片側は Codex App Server の **JSON-RPC(stdio)** と **Item/Turn/Thread**、**承認UI**を図解する。日本語ラベルで「一次情報/経路の確認」と「UI統合の設計」を強調する。  \n\n## shared motifs（2-4）\n- 「内部仕様を知らないと判断を誤る」象徴として **見かけ（取得/実行） vs 実体（要約/イベント/層）** の二層表現  \n- **条件分岐・フロー図**（WebFetchのバイパス判定／App Serverのプロトコル・イベント）  \n- **ストリーミング/途中出力**の視覚化（WebFetchの途中切断イメージ／Item/delta/イベントの流れ）  \n- **一次情報 vs 要約（または層）** を示す対比テキストブロック（「原文」ではなく「経由データ」）\n\n        Visual direction:\n        - Make the actual article contents the main subject: technical concepts,\n          architecture fragments, code/data/network abstractions, APIs, runtime\n          behavior, constraints, and implementation trade-offs.\n        - Synthesize the articles into one coherent editorial image. It should feel\n          like a visual memory of what was read this week.\n        - Avoid depicting the publishing workflow, issue management, clipping,\n          sorting, reviewing, automation, or a step-by-step process chart.\n        - Use clean Japanese typography only where it helps the topic-focused cover.\n        - The title 「今週読んだ技術記事メモ」 may appear as a small editorial heading,\n          but it should not dominate the image.\n        - Include 2-4 short Japanese topic labels derived from the source article\n          context when they fit naturally. English technical terms from article\n          titles are allowed only when necessary.\n        - Use the site's palette: warm paper, black ink, teal, rust orange, and a\n          small yellow accent.\n        - Clean editorial composition, subtle grid paper texture, crisp vector-like\n          shapes, production-quality blog cover.\n\n        Hard constraints:\n        - Do not include a date.\n        - Do not add filler pseudo text.\n        - Do not reproduce screenshots, product UIs, website layouts, logos, or\n          brand marks.\n        - Do not include people, faces, mascots, or photorealistic devices.\n        - The result should work as an article image, not an advertisement.",
+    "error": null
+  },
+  "issues": [
+    {
+      "number": 35,
+      "issueUrl": "https://github.com/ochisamu/ochisamu.info/issues/35",
+      "sourceUrl": "https://zenn.dev/zhizhiarv/articles/claude-code-webfetch-haiku-summary",
+      "fetchStatus": "ok"
+    },
+    {
+      "number": 32,
+      "issueUrl": "https://github.com/ochisamu/ochisamu.info/issues/32",
+      "sourceUrl": "https://zenn.dev/kun432/scraps/9fe862943fb00e",
+      "fetchStatus": "ok"
+    }
+  ]
+}
