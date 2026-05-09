@@ -256,6 +256,9 @@ def extract_visible_text(soup: BeautifulSoup) -> str:
 
 def fetch_page_context(url: str) -> PageContext:
     print(f"Fetching article context: {url}")
+    parsed = urllib.parse.urlparse(url)
+    if parsed.scheme not in {"http", "https"}:
+        return PageContext(url, url, "", "", f"invalid-url:{url}")
 
     request = urllib.request.Request(
         url,
@@ -466,6 +469,24 @@ def limit_total_article_text(clips: list[dict]) -> list[dict]:
     return limited
 
 
+def build_visual_clip_payload(clips: list[Clip]) -> list[dict]:
+    payload = []
+    for clip in clips:
+        payload.append(
+            {
+                "url": clip.source_url or clip.url,
+                "title": clip.source_title,
+                "description": clip.source_description,
+                "source_excerpt": clip.source_excerpt,
+                "comment": clip.comment,
+                "tags": clip.tags,
+                "importance": clip.importance,
+                "fetch_status": clip.fetch_status,
+            }
+        )
+    return limit_total_article_text(payload)
+
+
 def build_article_body(clips: list[Clip]) -> str:
     clip_payload = limit_total_article_text([asdict(clip) for clip in clips])
     model = deepagents_model_id()
@@ -609,7 +630,7 @@ def generate_image_b64_with_responses(prompt: str) -> str:
 
 
 def create_cover_image_with_agent(clips: list[Clip], body: str, cover_path: Path) -> str:
-    clip_payload = limit_total_article_text([asdict(clip) for clip in clips])
+    clip_payload = build_visual_clip_payload(clips)
     model = deepagents_model_id()
     generated_prompt: dict[str, str | None] = {"prompt": None}
 
@@ -632,6 +653,8 @@ def create_cover_image_with_agent(clips: list[Clip], body: str, cover_path: Path
 
             For the single clip you receive:
             - Use fetch_url(url) first, even if an excerpt is already provided.
+            - The url field is the source article URL. Do not call fetch_url with
+              issue numbers, labels, titles, comments, or fragments such as "#35".
             - Use web_search only when the fetched page is missing, too short, or unclear.
             - Focus on what the linked article actually says, not on the author's
               workflow for saving or summarizing articles.
@@ -705,6 +728,7 @@ def create_cover_image_with_agent(clips: list[Clip], body: str, cover_path: Path
         f"""
         以下の tech-clip Issue から、カバー画像用のプロンプトを作ってください。
         必ず各 clip について article-visual-reader subagent を呼び、元記事の中身を読んでから統合してください。
+        fetch_url には各 clip の url フィールドだけを渡してください。Issue 番号や "#35" のような文字列は URL ではありません。
 
         clips:
         {json.dumps(clip_payload, ensure_ascii=False, indent=2)}
@@ -774,9 +798,10 @@ def write_outputs(clips: list[Clip], body: str) -> None:
                 f'![今週読んだ技術記事メモ {date} のカバー画像](./cover.png)\n\n'
             )
         except Exception as error:
-            print("Cover image generation failed; continuing without cover image")
+            print("Cover image generation failed")
             print(error)
             cover_result.error = str(error)
+            raise
 
     references = "\n".join(
         (
