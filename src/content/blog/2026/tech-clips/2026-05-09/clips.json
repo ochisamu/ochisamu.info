@@ -1,0 +1,27 @@
+{
+  "generatedAt": "2026-05-09T15:17:23.488501+09:00",
+  "generator": "deepagents",
+  "coverImage": {
+    "enabled": true,
+    "path": null,
+    "model": "gpt-image-2",
+    "size": "1536x1024",
+    "quality": "high",
+    "prompt": null,
+    "error": "unknown url type: '#35'"
+  },
+  "issues": [
+    {
+      "number": 35,
+      "issueUrl": "https://github.com/ochisamu/ochisamu.info/issues/35",
+      "sourceUrl": "https://zenn.dev/zhizhiarv/articles/claude-code-webfetch-haiku-summary",
+      "fetchStatus": "ok"
+    },
+    {
+      "number": 32,
+      "issueUrl": "https://github.com/ochisamu/ochisamu.info/issues/32",
+      "sourceUrl": "https://zenn.dev/kun432/scraps/9fe862943fb00e",
+      "fetchStatus": "ok"
+    }
+  ]
+}
