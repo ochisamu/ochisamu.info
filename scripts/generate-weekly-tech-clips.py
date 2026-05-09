@@ -104,6 +104,12 @@ def deepagents_model_id() -> str:
     return f"openai:{OPENAI_MODEL}"
 
 
+def responses_model_id() -> str:
+    if OPENAI_MODEL.startswith("openai:"):
+        return OPENAI_MODEL.split(":", 1)[1]
+    return OPENAI_MODEL
+
+
 def jst_date() -> tuple[str, str]:
     now = datetime.now(ZoneInfo("Asia/Tokyo"))
     return str(now.year), now.strftime("%Y-%m-%d")
@@ -326,7 +332,7 @@ def web_search(query: str, max_results: int = 5) -> str:
         return "Web search is disabled by OPENAI_WEB_SEARCH=false."
 
     payload = {
-        "model": OPENAI_MODEL,
+        "model": responses_model_id(),
         "input": (
             "Search the web and return concise Japanese research notes with URLs. "
             f"Limit results to {max_results} sources.\n\nQuery: {query}"
@@ -388,21 +394,6 @@ def strip_markdown_fence(value: str) -> str:
     value = value.strip()
     match = re.match(r"^```(?:markdown|md)?\s*\n([\s\S]*?)\n```$", value)
     return match.group(1).strip() if match else value
-
-
-def extract_article_topics(body: str, max_items: int = 6) -> list[str]:
-    topics = []
-    for line in body.splitlines():
-        match = re.match(r"^#{2,3}\s+(.+?)\s*$", line)
-        if not match:
-            continue
-        title = match.group(1).strip()
-        if title in {"今週の所感", "参照したクリップ"}:
-            continue
-        topics.append(title)
-        if len(topics) >= max_items:
-            break
-    return topics
 
 
 def load_clips() -> list[Clip]:
@@ -573,67 +564,28 @@ def escape_markdown_link_text(value: str) -> str:
     return value.replace("\\", "\\\\").replace("[", "\\[").replace("]", "\\]")
 
 
-def build_cover_image_prompt(clips: list[Clip], body: str, date: str) -> str:
-    topics = extract_article_topics(body)
-    source_titles = [clip.source_title for clip in clips if clip.source_title][:6]
-    comments = [clip.comment for clip in clips if clip.comment][:4]
-
-    return textwrap.dedent(
-        f"""
-        Create a landscape editorial cover illustration for a Japanese personal
-        technical blog weekly roundup.
-
-        Article date: {date}
-        Main topics:
-        {json.dumps(topics or source_titles, ensure_ascii=False, indent=2)}
-
-        Author notes:
-        {json.dumps(comments, ensure_ascii=False, indent=2)}
-
-        Visual direction:
-        - Japanese technical notebook / field note cover.
-        - Abstract diagram about saved web articles becoming a reviewed blog post.
-        - Use clean Japanese typography as part of the cover design.
-        - Include visual motifs such as clipped notes, GitHub issue cards, workflow
-          arrows, small terminal panels, browser/article sheets, and AI-assisted
-          editing as abstract shapes.
-        - Use the site's palette: warm paper, black ink, teal, rust orange, and a
-          small yellow accent.
-        - Clean editorial composition, subtle grid paper texture, crisp vector-like
-          shapes, production-quality blog cover.
-
-        Text to include:
-        - Include readable Japanese text intentionally.
-        - Use the exact main title: 「今週読んだ技術記事メモ」
-        - Include the date: 「{date}」
-        - Optionally include 2-4 short Japanese topic labels derived from the main
-          topics, only if they fit naturally in the composition.
-        - Keep text minimal and legible; do not add filler pseudo text.
-
-        Hard constraints:
-        - No English words, no logos, and no brand marks.
-        - Do not reproduce screenshots, product UIs, website layouts, or brand marks.
-        - Do not include people, faces, mascots, or photorealistic devices.
-        - The result should work as an article image, not an advertisement.
-        """
-    ).strip()
+def response_item_value(item, key: str):
+    if isinstance(item, dict):
+        return item.get(key)
+    return getattr(item, key, None)
 
 
-def generate_cover_image(clips: list[Clip], body: str, out_dir: Path, date: str) -> str:
-    prompt = build_cover_image_prompt(clips, body, date)
-    print("Generating cover image")
-    print(f"Image model: {OPENAI_IMAGE_MODEL}")
-    print(f"Image size: {OPENAI_IMAGE_SIZE}")
-    print(f"Image quality: {OPENAI_IMAGE_QUALITY}")
-
+def generate_image_b64_with_responses(prompt: str) -> str:
     client = OpenAI(api_key=OPENAI_API_KEY)
     try:
-        result = client.images.generate(
-            model=OPENAI_IMAGE_MODEL,
-            prompt=prompt,
-            size=OPENAI_IMAGE_SIZE,
-            quality=OPENAI_IMAGE_QUALITY,
-            n=1,
+        response = client.responses.create(
+            model=responses_model_id(),
+            input=prompt,
+            tools=[
+                {
+                    "type": "image_generation",
+                    "model": OPENAI_IMAGE_MODEL,
+                    "size": OPENAI_IMAGE_SIZE,
+                    "quality": OPENAI_IMAGE_QUALITY,
+                    "output_format": "png",
+                }
+            ],
+            tool_choice={"type": "image_generation"},
             timeout=180,
         )
     except APIStatusError as error:
@@ -646,12 +598,142 @@ def generate_cover_image(clips: list[Clip], body: str, out_dir: Path, date: str)
             f"OpenAI image generation failed: {error}"
         ) from error
 
-    image_b64 = result.data[0].b64_json if result.data else None
-    if not image_b64:
-        raise RuntimeError("Image generation response did not include b64_json")
+    for item in response_item_value(response, "output") or []:
+        if response_item_value(item, "type") != "image_generation_call":
+            continue
+        image_b64 = response_item_value(item, "result")
+        if image_b64:
+            return image_b64
+
+    raise RuntimeError("Image generation response did not include image data")
+
+
+def create_cover_image_with_agent(clips: list[Clip], body: str, cover_path: Path) -> str:
+    clip_payload = limit_total_article_text([asdict(clip) for clip in clips])
+    model = deepagents_model_id()
+    generated_prompt: dict[str, str | None] = {"prompt": None}
+
+    def create_cover_image(prompt: str) -> str:
+        """Generate and save the weekly cover image from the final image prompt."""
+        image_b64 = generate_image_b64_with_responses(prompt)
+        cover_path.write_bytes(base64.b64decode(image_b64))
+        generated_prompt["prompt"] = prompt
+        return f"Generated {cover_path}"
+
+    article_visual_reader = {
+        "name": "article-visual-reader",
+        "description": (
+            "Reads one clipped technical article and extracts visual direction "
+            "focused on the article content."
+        ),
+        "system_prompt": textwrap.dedent(
+            """
+            You are a visual research subagent for a Japanese technical blog cover.
+
+            For the single clip you receive:
+            - Use fetch_url(url) first, even if an excerpt is already provided.
+            - Use web_search only when the fetched page is missing, too short, or unclear.
+            - Focus on what the linked article actually says, not on the author's
+              workflow for saving or summarizing articles.
+            - Extract concrete technical subjects that can become a cover image:
+              systems, APIs, architecture, constraints, data flow, security model,
+              UI concept, runtime behavior, or implementation trade-offs.
+            - Do not invent facts that are not in the article or search results.
+            - Avoid long quotations.
+
+            Return concise Japanese visual research notes.
+
+            Output format:
+            - 元記事: [title](url)
+            - 中心テーマ: 1 sentence
+            - 絵にする技術要素: 3 bullets max
+            - 使える短いラベル: 2-3 Japanese labels, with English technical terms only when they are essential
+            - 避ける表現: 1-2 bullets
+            """
+        ).strip(),
+        "tools": [fetch_url, web_search],
+        "model": model,
+    }
+
+    agent = create_deep_agent(
+        model=model,
+        tools=[create_cover_image],
+        subagents=[article_visual_reader],
+        system_prompt=textwrap.dedent(
+            """
+            You are the art director for ochisamu.info cover images.
+
+            Required workflow:
+            1. For every clip in the input, call the article-visual-reader subagent exactly once.
+            2. Use the returned visual research notes as the primary material.
+            3. Use the generated weekly article only as secondary context.
+            4. Write one final image-generation prompt for gpt-image-2.
+            5. Call create_cover_image exactly once with that final prompt.
+
+            The cover must focus on the technical articles that were read. It must
+            not depict the act of collecting, sorting, reviewing, publishing, or
+            automating a weekly roundup.
+
+            Final prompt requirements:
+            - Write the prompt in English, because it is sent directly to the image model.
+            - Ask for a landscape editorial cover illustration for a Japanese
+              personal technical blog.
+            - Make the article contents the visual subject: technical concepts,
+              architecture fragments, code/data/network abstractions, APIs,
+              runtime behavior, constraints, or implementation trade-offs.
+            - Synthesize the articles into one coherent image; do not create a
+              step-by-step process chart, timeline, or automation diagram.
+            - Japanese readable text is allowed. The title 「今週読んだ技術記事メモ」
+              may appear as a small editorial heading, but it must not dominate.
+            - Include 2-4 short Japanese topic labels when they help connect the
+              image to the actual articles. English technical terms from article
+              titles are allowed only when necessary.
+            - Keep text minimal and legible; do not add filler pseudo text.
+            - Use the site's palette: warm paper, black ink, teal, rust orange,
+              and a small yellow accent.
+            - Avoid logos, brand marks, screenshots, product UI replicas, people,
+              faces, mascots, and photorealistic devices.
+            - The result should work as an article image, not an advertisement.
+
+            After create_cover_image succeeds, output only the final
+            image-generation prompt. Do not wrap it in a Markdown code fence.
+            """
+        ).strip(),
+    )
+
+    prompt = textwrap.dedent(
+        f"""
+        以下の tech-clip Issue から、カバー画像用のプロンプトを作ってください。
+        必ず各 clip について article-visual-reader subagent を呼び、元記事の中身を読んでから統合してください。
+
+        clips:
+        {json.dumps(clip_payload, ensure_ascii=False, indent=2)}
+
+        Generated weekly article, for secondary context only:
+        {body.strip()}
+        """
+    ).strip()
+
+    result = agent.invoke({"messages": [{"role": "user", "content": prompt}]})
+    image_prompt = generated_prompt["prompt"] or strip_markdown_fence(
+        get_agent_text(result)
+    )
+    if not image_prompt:
+        raise RuntimeError("No image prompt returned from DeepAgents")
+    if not cover_path.exists():
+        raise RuntimeError("Cover image was not generated by DeepAgents")
+    return image_prompt
+
+
+def generate_cover_image(clips: list[Clip], body: str, out_dir: Path, date: str) -> str:
+    del date
+    print("Generating cover image from article contents")
+    print(f"Image model: {OPENAI_IMAGE_MODEL}")
+    print(f"Image size: {OPENAI_IMAGE_SIZE}")
+    print(f"Image quality: {OPENAI_IMAGE_QUALITY}")
 
     cover_path = out_dir / "cover.png"
-    cover_path.write_bytes(base64.b64decode(image_b64))
+    prompt = create_cover_image_with_agent(clips, body, cover_path)
     print(f"Generated {cover_path}")
     return prompt
 
