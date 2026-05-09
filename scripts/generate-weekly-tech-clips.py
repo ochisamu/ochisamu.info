@@ -593,6 +593,7 @@ def build_cover_image_prompt(clips: list[Clip], body: str, date: str) -> str:
         Visual direction:
         - Japanese technical notebook / field note cover.
         - Abstract diagram about saved web articles becoming a reviewed blog post.
+        - Use clean Japanese typography as part of the cover design.
         - Include visual motifs such as clipped notes, GitHub issue cards, workflow
           arrows, small terminal panels, browser/article sheets, and AI-assisted
           editing as abstract shapes.
@@ -601,8 +602,16 @@ def build_cover_image_prompt(clips: list[Clip], body: str, date: str) -> str:
         - Clean editorial composition, subtle grid paper texture, crisp vector-like
           shapes, production-quality blog cover.
 
+        Text to include:
+        - Include readable Japanese text intentionally.
+        - Use the exact main title: 「今週読んだ技術記事メモ」
+        - Include the date: 「{date}」
+        - Optionally include 2-4 short Japanese topic labels derived from the main
+          topics, only if they fit naturally in the composition.
+        - Keep text minimal and legible; do not add filler pseudo text.
+
         Hard constraints:
-        - No readable text, no Japanese text, no English words, no logos.
+        - No English words, no logos, and no brand marks.
         - Do not reproduce screenshots, product UIs, website layouts, or brand marks.
         - Do not include people, faces, mascots, or photorealistic devices.
         - The result should work as an article image, not an advertisement.
