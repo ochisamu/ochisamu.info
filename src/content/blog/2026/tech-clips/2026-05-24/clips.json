@@ -1,0 +1,33 @@
+{
+  "generatedAt": "2026-05-24T19:38:48.288214+09:00",
+  "generator": "deepagents",
+  "coverImage": {
+    "enabled": true,
+    "path": "cover.png",
+    "model": "gpt-image-2",
+    "size": "1536x1024",
+    "quality": "high",
+    "prompt": "Create a landscape editorial cover illustration for a Japanese personal\n        technical blog weekly roundup. The image should focus on the technical\n        articles that were read, not on the act of collecting or summarizing them.\n\n        Visual source notes:\n        ## Article 1: スタックチャン開発に必要な情報まとめ\n- **title**: スタックチャン開発に必要な情報まとめ\n- **central theme**: スタックチャンを動かすために、顔描画・サーボ・音声・対話をどう実装/既製品利用/自作切替するかを整理する。\n- **visualizable technical motifs**:\n  - M5Stackスタックチャンの「顔」＆「サーボ駆動（SG90/SCServo）」を示すイメージ（顔UI＋サーボモータ配線/ギア）\n  - 「音声合成（TTS）/音声再生」→ WAV再生の流れ（USBシリアル＋再生アイコン）\n  - AI会話の分岐（LLM＋STT＋TTS、Realtime API、YAML設定/モード切替、build_flag）\n  - ライブラリ/実装系統の対比（Moddable(TypeScript) vs Arduino(C++) vs 公式BSP vs ESP-IDF/ESPHome）\n- **1-3 short Japanese labels**:\n  - 「サーボ制御」\n  - 「音声TTS」\n  - 「AI会話モード（YAML）」\n- **1 thing to avoid misrepresenting**: SCServo_lib→FTServo_Arduinoの“変更”を本カバーで断定的に主題化しない（記事は経緯も触れるが、変更履歴自体が主題ではない）。\n\n---\n\n## Article 2: ホテルの客室向けインフォメーションシステムを内製してみた\n- **title**: ホテルの客室向けインフォメーションシステムを内製してみた\n- **central theme**: 客室テレビ・タブレット・スマホを同一Webアプリ（PWA）で横断し、現場運用負荷を下げる設計を示す。\n- **visualizable technical motifs**:\n  - 「3端末」構図（TVリモコンUI／タブレット画面／スマホブラウザ/PWAアイコン）\n  - マルチテナント（施設IDをURLパスに埋める）例：`/tsukiji` ` /mei` のようなパス表示\n  - PWAの要素（manifest/Service Worker生成）を表すアイコン（“install”/ホーム画面追加）\n  - テレビ操作のフォーカス移動ロジック（useTVRemoteControl / Arrowキー・Enter・Back）\n- **1-3 short Japanese labels**:\n  - 「PWA」\n  - 「マルチテナント（施設ID）」\n  - 「テレビ操作（リモコン）」\n- **1 thing to avoid misrepresenting**: 実際のホテル名や施設固有のデザインを強調しすぎない（記事は例として複数施設名を出すが、主題は技術構成）。\n\n---\n\n## Article 3: GoogleのModern Web Guidanceスキル登場。AIが古いCSS・JSを書く問題を解決する\n- **title**: GoogleのModern Web Guidanceスキル登場。AIが古いCSS・JSを書く問題を解決する\n- **central theme**: AIエージェントに“モダンWebの知識”を注入し、古いCSS/JSやアクセシビリティ漏れを防ぐ。\n- **visualizable technical motifs**:\n  - Modern Web Guidanceの「6分野」表示（CSSレイアウト/UX/パフォーマンス/フォーム&UI/アクセシビリティ/ブラウザ内蔵AI）\n  - コード品質改善の比較ビジュアル（古い書き方→モダン書き方、Subgrid/dialog/アクセシビリティ/INP等のキーワード）\n  - Baseline対応に連動（互換性/フォールバックの“チェック”UI）\n  - `npx modern-web-guidance@latest install` と `search → retrieve` のフロー図\n- **1-3 short Japanese labels**:\n  - 「Modern Web Guidance」\n  - 「Baseline連動」\n  - 「アクセシビリティ」\n- **1 thing to avoid misrepresenting**: 特定のベンダー/製品名（Claude Code等）を主役にしすぎない（記事の中心はModern Web Guidanceスキルそのもの）。\n\n---\n\n# combined cover concept (shared blog cover)\n日本の個人技術ブログ向けに、「ローカルデバイス/現場運用/フロント品質」を横断する技術選定の横串を1枚で見せる。左〜中央に **スタックチャン（サーボ・音声・AI会話）**、右に **ホテルHIS（TVリモコン操作・PWA・マルチテナント）**、さらに奥または上部に **Modern Web Guidance（モダンWeb/アクセシビリティ/ baselineチェック）** を“ガイド・品質検査”のオーラとして重ね、最後に共通テーマとして「実装を最新/運用可能にする」を強調する。\n\n# shared motifs (connect the articles)\n- 「選択肢を整理する」図解風モチーフ：モード/施設ID/6分野の“チェックリスト”感\n- “入力デバイス最適化”の表現：スタックチャンの制御入力、HISのTVリモコン、Modern WebのUI/アクセシビリティ観点\n- 最新化を支える仕組み：既製ライブラリ/内製アーキテクチャ/PWA・Service Worker/AIスキル導入（品質を上げる道具として描く）\n\n        Visual direction:\n        - Make the actual article contents the main subject: technical concepts,\n          architecture fragments, code/data/network abstractions, APIs, runtime\n          behavior, constraints, and implementation trade-offs.\n        - Synthesize the articles into one coherent editorial image. It should feel\n          like a visual memory of what was read this week.\n        - Avoid depicting the publishing workflow, issue management, clipping,\n          sorting, reviewing, automation, or a step-by-step process chart.\n        - Use clean Japanese typography only where it helps the topic-focused cover.\n        - The title 「今週読んだ技術記事メモ」 may appear as a small editorial heading,\n          but it should not dominate the image.\n        - Include 2-4 short Japanese topic labels derived from the source article\n          context when they fit naturally. English technical terms from article\n          titles are allowed only when necessary.\n        - Use the site's palette: warm paper, black ink, teal, rust orange, and a\n          small yellow accent.\n        - Clean editorial composition, subtle grid paper texture, crisp vector-like\n          shapes, production-quality blog cover.\n\n        Hard constraints:\n        - Do not include a date.\n        - Do not add filler pseudo text.\n        - Do not reproduce screenshots, product UIs, website layouts, logos, or\n          brand marks.\n        - Do not include people, faces, mascots, or photorealistic devices.\n        - The result should work as an article image, not an advertisement.",
+    "error": null
+  },
+  "issues": [
+    {
+      "number": 48,
+      "issueUrl": "https://github.com/ochisamu/ochisamu.info/issues/48",
+      "sourceUrl": "https://zenn.dev/karaage0703/articles/f14b27ccb22737",
+      "fetchStatus": "ok"
+    },
+    {
+      "number": 47,
+      "issueUrl": "https://github.com/ochisamu/ochisamu.info/issues/47",
+      "sourceUrl": "https://zenn.dev/7garden/articles/90bfc4e12b5461",
+      "fetchStatus": "ok"
+    },
+    {
+      "number": 46,
+      "issueUrl": "https://github.com/ochisamu/ochisamu.info/issues/46",
+      "sourceUrl": "https://zenn.dev/ubie_dev/articles/modern-web-guidance",
+      "fetchStatus": "ok"
+    }
+  ]
+}
