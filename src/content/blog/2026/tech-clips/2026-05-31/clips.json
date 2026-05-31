@@ -1,0 +1,21 @@
+{
+  "generatedAt": "2026-05-31T19:43:47.465349+09:00",
+  "generator": "deepagents",
+  "coverImage": {
+    "enabled": true,
+    "path": "cover.png",
+    "model": "gpt-image-2",
+    "size": "1536x1024",
+    "quality": "high",
+    "prompt": "Create a landscape editorial cover illustration for a Japanese personal\n        technical blog weekly roundup. The image should focus on the technical\n        articles that were read, not on the act of collecting or summarizing them.\n\n        Visual source notes:\n        ## 記事1\n- **title**: Webwright | Terminal-Native Web Agents  \n- **central theme**: ターミナルとローカル workspace を中心に、ブラウザ探索を「検証→ログ/スクショ保存→再実行できるコード」に変換する。  \n- **2-4 visualizable technical motifs**:\n  1. **ターミナル + workspace**（`final_script.py`、`*_log.txt`、`screenshots/`、`self_reflect_result.json` が増えていくイメージ）\n  2. **複数のブラウザセッションを使い捨て**（状態保持し続けず「新規起動→調査→破棄」の流れ）\n  3. **ループ駆動のエージェント手順**（Send context → Emit bash → 実行して観測/ログ/スクショ → Refine）\n  4. **done判定のゲート**（fresh folder で再実行 + self-reflection 成功後に完了）\n- **1-3 short Japanese labels**:\n  - 「ターミナルWebエージェント」\n  - 「再実行可能な成果物（workspace）」\n  - 「使い捨てブラウザ」\n- **1 thing to avoid misrepresenting**:\n  - Webwright が「stateful なブラウザを1つだけ保持してクリックを予測する」従来型そのものだと誤解させない（**ブラウザ分離/破棄**が重要）。\n\n---\n\n## combined cover concept\nターミナル画面の中央に、AI が生成した `final_script.py` を実行し、同時に `action logs/スクリーンショット/workspace` がフォルダへ蓄積されていくビジュアルを配置する。周囲に「使い捨てブラウザ（新規起動→検証→破棄）」と「fresh folder での再実行 + self-reflection で完了」のループを、矢印付き図として表現する。  \n\n## shared motifs（記事をつなぐ共通点）\n- **ターミナル中心の実行環境**（command → 観測 → 次の修正）\n- **成果物を workspace に残す設計**（ログ/スクショ/ファイル/再利用コード）\n- **ブラウザセッションを状態の罠から切り離す**（使い捨て/再実行）\n\n        Visual direction:\n        - Make the actual article contents the main subject: technical concepts,\n          architecture fragments, code/data/network abstractions, APIs, runtime\n          behavior, constraints, and implementation trade-offs.\n        - Synthesize the articles into one coherent editorial image. It should feel\n          like a visual memory of what was read this week.\n        - Avoid depicting the publishing workflow, issue management, clipping,\n          sorting, reviewing, automation, or a step-by-step process chart.\n        - Use clean Japanese typography only where it helps the topic-focused cover.\n        - The title 「今週読んだ技術記事メモ」 may appear as a small editorial heading,\n          but it should not dominate the image.\n        - Include 2-4 short Japanese topic labels derived from the source article\n          context when they fit naturally. English technical terms from article\n          titles are allowed only when necessary.\n        - Use the site's palette: warm paper, black ink, teal, rust orange, and a\n          small yellow accent.\n        - Clean editorial composition, subtle grid paper texture, crisp vector-like\n          shapes, production-quality blog cover.\n\n        Hard constraints:\n        - Do not include a date.\n        - Do not add filler pseudo text.\n        - Do not reproduce screenshots, product UIs, website layouts, logos, or\n          brand marks.\n        - Do not include people, faces, mascots, or photorealistic devices.\n        - The result should work as an article image, not an advertisement.",
+    "error": null
+  },
+  "issues": [
+    {
+      "number": 50,
+      "issueUrl": "https://github.com/ochisamu/ochisamu.info/issues/50",
+      "sourceUrl": "https://microsoft.github.io/Webwright/",
+      "fetchStatus": "ok"
+    }
+  ]
+}
