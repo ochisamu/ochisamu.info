@@ -1,0 +1,21 @@
+{
+  "generatedAt": "2026-06-14T20:03:01.135082+09:00",
+  "generator": "deepagents",
+  "coverImage": {
+    "enabled": true,
+    "path": "cover.png",
+    "model": "gpt-image-2",
+    "size": "1536x1024",
+    "quality": "high",
+    "prompt": "Create a landscape editorial cover illustration for a Japanese personal\n        technical blog weekly roundup. The image should focus on the technical\n        articles that were read, not on the act of collecting or summarizing them.\n\n        Visual source notes:\n        ## Article 1\n- **title**: （記事本文取得失敗）qiita.com/ktdatascience/items/4b35eb4e157becfac073\n- **central theme**: 画像生成の前に Mermaid で構造（意図）を可視化すると、画像生成のブレが減る。\n- **2-4 visualizable technical motifs**:\n  1. **Mermaid図**（フローチャート/シーケンス風の箱と矢印）\n  2. **図→プロンプト**の矢印（Mermaidを元に文章を生成する流れ）\n  3. **プロンプト入力ウィンドウ**（テキスト欄＋「生成」ボタンのイメージ）\n  4. **再生成ループ**（修正→再生成の循環矢印）\n- **1-3 short Japanese labels that can appear in the image**:\n  - 「Mermaidで構造化」\n  - 「意図をプロンプトへ」\n  - 「再生成で調整」\n- **1 thing to avoid misrepresenting**: 記事本文内容（特定の技術やコード）を、コメント以外の情報で推測して描かないこと。\n\n---\n\n## combined cover concept\nMermaidでフローチャート（構造）を先に描き、その図をもとに画像生成用プロンプトへ落とし込んでから生成し、必要に応じて図（構造）を修正して再生成する「2段階ワークフロー」を中心に表現する。画面は「Mermaid→プロンプト→画像生成→修正→再生成」の流れが一目で分かる構図にする。  \n\n## shared motifs (2-4)\n1. **Mermaid図（箱と矢印）**  \n2. **Mermaid→プロンプトへの変換フロー**  \n3. **画像生成フェーズ（入力欄/生成ボタンの抽象UI）**  \n4. **再生成ループ（修正して戻る矢印）**\n\n        Visual direction:\n        - Make the actual article contents the main subject: technical concepts,\n          architecture fragments, code/data/network abstractions, APIs, runtime\n          behavior, constraints, and implementation trade-offs.\n        - Synthesize the articles into one coherent editorial image. It should feel\n          like a visual memory of what was read this week.\n        - Avoid depicting the publishing workflow, issue management, clipping,\n          sorting, reviewing, automation, or a step-by-step process chart.\n        - Use clean Japanese typography only where it helps the topic-focused cover.\n        - The title 「今週読んだ技術記事メモ」 may appear as a small editorial heading,\n          but it should not dominate the image.\n        - Include 2-4 short Japanese topic labels derived from the source article\n          context when they fit naturally. English technical terms from article\n          titles are allowed only when necessary.\n        - Use the site's palette: warm paper, black ink, teal, rust orange, and a\n          small yellow accent.\n        - Clean editorial composition, subtle grid paper texture, crisp vector-like\n          shapes, production-quality blog cover.\n\n        Hard constraints:\n        - Do not include a date.\n        - Do not add filler pseudo text.\n        - Do not reproduce screenshots, product UIs, website layouts, logos, or\n          brand marks.\n        - Do not include people, faces, mascots, or photorealistic devices.\n        - The result should work as an article image, not an advertisement.",
+    "error": null
+  },
+  "issues": [
+    {
+      "number": 54,
+      "issueUrl": "https://github.com/ochisamu/ochisamu.info/issues/54",
+      "sourceUrl": "https://qiita.com/ktdatascience/items/4b35eb4e157becfac073",
+      "fetchStatus": "failed:403"
+    }
+  ]
+}
