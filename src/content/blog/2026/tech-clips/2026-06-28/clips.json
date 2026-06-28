@@ -1,0 +1,27 @@
+{
+  "generatedAt": "2026-06-28T19:49:00.468166+09:00",
+  "generator": "deepagents",
+  "coverImage": {
+    "enabled": true,
+    "path": "cover.png",
+    "model": "gpt-image-2",
+    "size": "1536x1024",
+    "quality": "high",
+    "prompt": "Create a landscape editorial cover illustration for a Japanese personal\n        technical blog weekly roundup. The image should focus on the technical\n        articles that were read, not on the act of collecting or summarizing them.\n\n        Visual source notes:\n        ### 記事1\n- **title**: Generative UIにJSONは最適なのか？ OpenUIという選択肢  \n- **central theme**: LLMが生成したUIを安全に・意図どおりにレンダリングするために「出力の契約（component library/型/props/契約）」を設計する重要性を説明する。  \n- **visualizable technical motifs**:\n  - 「UIを作る」のではなく「出力の契約」を設計する発想（図解：AI→契約→Renderer→Live UI）\n  - **OpenUI パイプライン**（Component Library → System Prompt → LLM Stream → Parser → Renderer → Live UI）\n  - **OpenUI Lang（DSL）**の行単位ストリーミングと Parser/Renderer の対応\n  - JSON / HTML / DSL の比較表（出力形式×ストリーミング×制御）\n- **Japanese labels**:\n  - **出力の契約**\n  - **OpenUI Lang（DSL）**\n  - **Component Library**\n- **avoid (misrepresenting)**: OpenUIが「必ず最適（性能/品質が常に上）」と断定しているように見せない（記事は“選択肢の比較・理由”に焦点）。\n\n---\n\n### 訳事2\n- **title**: 【図解】エンジニアの「雑なMermaid」を、ビジネス側に刺さる図解に変換する - Qiita  \n- **central theme**: 長文を直接投げず、**Mermaidで構造を先に固定**してから図解生成することで、資料向けに破綻しにくい画像を作る。  \n- **visualizable technical motifs**:\n  - **Mermaid → 清書（インフォグラフィック生成）**の2段構えフロー図\n  - 図解の見た目制約（白背景、日本語ゴシック体、タイトルなし、公式アイコン）\n  - モデル選択（Nano Banana / Pro / 2 の用途差、特に日本語テキスト安定）\n  - 「長文は要約→構造化してから生成」分岐（条件付きの設計）\n- **Japanese labels**:\n  - **Mermaid**\n  - **構造化 → 清書**\n  - **白背景 / 日本語ゴシック**\n- **avoid (misrepresenting)**: 「公式アイコンがブランドガイドライン準拠で常に正確に出る」と誤解させない（記事では期待しすぎ注意）。\n\n---\n\n## combined cover concept\n生成AIのアウトプットを“そのまま投げる”のではなく、**先に人間が構造・契約を固定して破綻を減らす**ことをテーマにした日本語技術ブログ向け表紙。  \n左に **OpenUI パイプライン（Component Library → System Prompt → OpenUI Lang(DSL) Stream → Parser → Renderer）**、右に **Mermaid → 構造化 → 図解清書（白背景/日本語ゴシック）** の対比フローを配置し、中央に「出力の契約 / guardrail」という見出しを置く。  \n\n## shared motifs (articles connection)\n- **“先に構造を決める”**（OpenUIのcomponent library/DSL、Mermaidで骨組みを固定）\n- **ストリーミング/途中出力の扱い**という実務論点（OpenUI Lang stream、Mermaid→要約→清書）\n- **制約（ガードレール）による破綻抑制**（出力形式の設計、図解の見た目制約）\n\n        Visual direction:\n        - Make the actual article contents the main subject: technical concepts,\n          architecture fragments, code/data/network abstractions, APIs, runtime\n          behavior, constraints, and implementation trade-offs.\n        - Synthesize the articles into one coherent editorial image. It should feel\n          like a visual memory of what was read this week.\n        - Avoid depicting the publishing workflow, issue management, clipping,\n          sorting, reviewing, automation, or a step-by-step process chart.\n        - Use clean Japanese typography only where it helps the topic-focused cover.\n        - The title 「今週読んだ技術記事メモ」 may appear as a small editorial heading,\n          but it should not dominate the image.\n        - Include 2-4 short Japanese topic labels derived from the source article\n          context when they fit naturally. English technical terms from article\n          titles are allowed only when necessary.\n        - Use the site's palette: warm paper, black ink, teal, rust orange, and a\n          small yellow accent.\n        - Clean editorial composition, subtle grid paper texture, crisp vector-like\n          shapes, production-quality blog cover.\n\n        Hard constraints:\n        - Do not include a date.\n        - Do not add filler pseudo text.\n        - Do not reproduce screenshots, product UIs, website layouts, logos, or\n          brand marks.\n        - Do not include people, faces, mascots, or photorealistic devices.\n        - The result should work as an article image, not an advertisement.",
+    "error": null
+  },
+  "issues": [
+    {
+      "number": 57,
+      "issueUrl": "https://github.com/ochisamu/ochisamu.info/issues/57",
+      "sourceUrl": "https://zenn.dev/sc30gsw/articles/d7320f1247b785",
+      "fetchStatus": "ok"
+    },
+    {
+      "number": 54,
+      "issueUrl": "https://github.com/ochisamu/ochisamu.info/issues/54",
+      "sourceUrl": "https://qiita.com/ktdatascience/items/4b35eb4e157becfac073",
+      "fetchStatus": "ok"
+    }
+  ]
+}
