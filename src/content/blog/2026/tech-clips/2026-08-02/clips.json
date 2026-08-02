@@ -1,0 +1,51 @@
+{
+  "generatedAt": "2026-08-02T20:17:53.346166+09:00",
+  "generator": "deepagents",
+  "coverImage": {
+    "enabled": true,
+    "path": "cover.png",
+    "model": "gpt-image-2",
+    "size": "1536x1024",
+    "quality": "high",
+    "prompt": "Create a landscape editorial cover illustration for a Japanese personal\n        technical blog weekly roundup. The image should focus on the technical\n        articles that were read, not on the act of collecting or summarizing them.\n\n        Visual source notes:\n        ## Article 1\n- **title**: 宮本佳林『アイドルがAIと配信のシステムを全部作った話』\n- **central theme**: プログラミング経験ゼロでも、AIと役割分担（クラウド共有/手元処理）で配信参加型システムを実装する。\n- **visualizable technical motifs**:\n  - 参加型配信の **HUDゲージ**（SUPPLY/HYPE、一定数で「衣装 解禁！」演出）\n  - **管理画面**からテロップ/数値/AI採点結果を更新し、配信画面へ反映\n  - **ハッシュタグ投稿数カウント**→ゲージ反映（ボタンで取得）\n  - **AIによるMV再現度採点**（「構図/衣装/照明」項目別スコア表示）\n- **Japanese labels (1-3)**:\n  - 「SUPPLY」「HYPE」\n  - 「衣装 解禁！」\n  - 「AI採点」\n- **avoid misrepresenting**: Claude Code/ChatGPT で“配信全てのコードを読まずに完全自動”だと断定しない（記事では「コードは一行も自分で書いていないが、指示と確認が中心」）。\n\n## Article 2\n- **title**: GitHub - cloudflare/kumo: Cloudflare's component library for building modern web applications.\n- **central theme**: アクセシビリティ対応を内蔵したUIコンポーネント群で、モダンWebアプリ開発を省力化する。\n- **visualizable technical motifs**:\n  - **UIコンポーネント**（Button/Input/Dialog）と **設計要素**（フォーカス管理/ARIA）\n  - **ツリーシェイキング**を意識した **粒度の細かいimport**概念図\n  - **CLIでドキュメント参照**（`kumo doc` / `kumo docs` の流れ）\n- **Japanese labels (1-3)**:\n  - 「アクセシビリティ」\n  - 「UIコンポーネント」\n  - 「ARIA」\n- **avoid misrepresenting**: “Kumoが特定のフレームワークで必ず動く/動かす”などの前提を置かない（記事はReact前提の記載がある程度）。\n\n## Article 3\n- **title**: Integrate with Codex | DeepSeek API Docs\n- **central theme**: DeepSeek（deepseek-v4-flash）をCodexにモデルプロバイダとして統合し、共通設定ファイルで各クライアントから利用する。\n- **visualizable technical motifs**:\n  - `~/.codex/config.toml` と **`~/.codex/models.json`**（モデルカタログ）の構成\n  - **セットアップスクリプト**によるバックアップ（`config.toml`の退避）\n  - **クライアント共有**（Codex CLI / ChatGPT desktop / VS Code拡張が同一設定を参照）\n- **Japanese labels (1-3)**:\n  - 「config.toml」\n  - 「models.json」\n  - 「DeepSeek v4-flash」\n- **avoid misrepresenting**: deepseek-v4-pro が既に対応済みだと描かない（記事は対応予定＝初期時点で未対応）。\n\n## Article 4\n- **title**: GitHub - TencentCloud/TencentDB-Agent-Memory\n- **central theme**: 会話・文書・コードを“再利用可能なメモリ資産”に抽出し、チームで共有するAgent向けメモリハブ。\n- **visualizable technical motifs**:\n  - メモリ資産4種の整理：**Chat Memory / Skills / Wiki / CodeGraph**\n  - **L0〜L3階層化**（会話→Atom/Scenario/Persona）\n  - **可視性と権限**（private / team / restricted / agent）\n  - 共有・運用の流れ：**Memory Hubパネル**→Agentへロードアウト\n- **Japanese labels (1-3)**:\n  - 「Chat Memory」\n  - 「Skills」「Wiki」「CodeGraph」\n  - 「権限：private/team」\n- **avoid misrepresenting**: “全てを無制限に保存”ではない（記事は「何でも記憶する」目的ではなく、価値ある資産を抽出・再利用する方針）。\n\n## Article 5\n- **title**: GitHub - firecrawl/pdf-inspector\n- **central theme**: OCRの前にPDFを分類し、テキストPDFはローカル抽出でMarkdown化する最適ルーティング部品。\n- **visualizable technical motifs**:\n  - **PDF分類フロー**：TextBased / Scanned / ImageBased / Mixed\n  - **OCRルーティング**（ページ単位で `pages_needing_ocr` を返す発想）\n  - **位置情報付きテキスト抽出**（フォント/X-Y/読取順・多段組）\n  - **Markdown変換**（見出し/箇条書き/コードブロック/テーブル/改ページ）\n- **Japanese labels (1-3)**:\n  - 「PDF分類」\n  - 「OCRルーティング」\n  - 「Markdown化」\n- **avoid misrepresenting**: OCRを常に使わないと断定しない（記事は“必要ならOCRサービスへ”というルーティング）。\n\n## Article 6\n- **title**: AIエージェントのハーネスをシンプルに保つ - 縦串のAGENTS.mdと横串のAgent Skills\n- **central theme**: 指示の土台（AGENTS.md）と再利用（Agent Skills）を分け、ハーネス肥大化を避けて維持する。\n- **visualizable technical motifs**:\n  - **縦串/横串**の対比図：AGENTS.md（ファイルツリーに沿う） vs Agent Skills（横断的に提供）\n  - AGENTS.md の **サブディレクトリ適用**（/docs, /src など）\n  - Skillの **YAMLフロントマター**（name/description）+ 本文構成の雰囲気図\n  - “増やさない”運用方針：必要になってから追加、コード/ lintで担保できるものは削る\n- **Japanese labels (1-3)**:\n  - 「AGENTS.md」\n  - 「Agent Skills」\n  - 「縦串/横串」\n- **avoid misrepresenting**: “どの環境でも同一で完全互換”としない（記事はClaude Code側の読み取り方など差異に言及）。\n\n---\n\n## combined cover concept\nAI時代の実装・運用を横断するビジュアルとして、「指示ハーネス（AGENTS.md/Skills）」「共有メモリ（Chat Memory/Wiki/CodeGraph）」「最適ルーティング（PDF分類→OCR/Markdown）」「統合設定（config.toml/models.json）」を、1枚の技術ダッシュボード風に配置する。中心に“クラウド共有とローカル処理の分離”を示す分割図を置き、周囲にSUPPLY/HYPE HUDやメモリ資産4種のラベルを小さく添えて、実装テーマ（作る）ではなく設計テーマ（分ける・絞る・再利用する）を強調する。日本語ラベルを多めに使い、見た瞬間に「運用で効く技術」のシリーズ感が出る構図にする。  \n\n### shared motifs (2-4)\n- **二分割の設計**：ローカル/クラウド、AGENTS.md/Skills、保存/再利用、OCR前/後などの“分担”アイコン\n- **構造化された資産**：HUD指標・メモリ資産（Chat Memory/Skills/Wiki/CodeGraph）・Markdown出力\n- **設定/メタデータの核**：`config.toml/models.json`、SkillのYAML、AGENTS.mdの役割分離\n- **配信/処理のルーティング**：投稿数カウント→ゲージ反映、PDF分類→ページ単位OCR、AI採点→画面表示\n\n        Visual direction:\n        - Make the actual article contents the main subject: technical concepts,\n          architecture fragments, code/data/network abstractions, APIs, runtime\n          behavior, constraints, and implementation trade-offs.\n        - Synthesize the articles into one coherent editorial image. It should feel\n          like a visual memory of what was read this week.\n        - Avoid depicting the publishing workflow, issue management, clipping,\n          sorting, reviewing, automation, or a step-by-step process chart.\n        - Use clean Japanese typography only where it helps the topic-focused cover.\n        - The title 「今週読んだ技術記事メモ」 may appear as a small editorial heading,\n          but it should not dominate the image.\n        - Include 2-4 short Japanese topic labels derived from the source article\n          context when they fit naturally. English technical terms from article\n          titles are allowed only when necessary.\n        - Use the site's palette: warm paper, black ink, teal, rust orange, and a\n          small yellow accent.\n        - Clean editorial composition, subtle grid paper texture, crisp vector-like\n          shapes, production-quality blog cover.\n\n        Hard constraints:\n        - Do not include a date.\n        - Do not add filler pseudo text.\n        - Do not reproduce screenshots, product UIs, website layouts, logos, or\n          brand marks.\n        - Do not include people, faces, mascots, or photorealistic devices.\n        - The result should work as an article image, not an advertisement.",
+    "error": null
+  },
+  "issues": [
+    {
+      "number": 64,
+      "issueUrl": "https://github.com/ochisamu/ochisamu.info/issues/64",
+      "sourceUrl": "https://ameblo.jp/miyamotokarin-official/entry-12974432505.html",
+      "fetchStatus": "ok"
+    },
+    {
+      "number": 63,
+      "issueUrl": "https://github.com/ochisamu/ochisamu.info/issues/63",
+      "sourceUrl": "https://github.com/cloudflare/kumo",
+      "fetchStatus": "ok"
+    },
+    {
+      "number": 62,
+      "issueUrl": "https://github.com/ochisamu/ochisamu.info/issues/62",
+      "sourceUrl": "https://api-docs.deepseek.com/quick_start/agent_integrations/codex/",
+      "fetchStatus": "ok"
+    },
+    {
+      "number": 61,
+      "issueUrl": "https://github.com/ochisamu/ochisamu.info/issues/61",
+      "sourceUrl": "https://github.com/TencentCloud/TencentDB-Agent-Memory",
+      "fetchStatus": "ok"
+    },
+    {
+      "number": 60,
+      "issueUrl": "https://github.com/ochisamu/ochisamu.info/issues/60",
+      "sourceUrl": "https://github.com/firecrawl/pdf-inspector",
+      "fetchStatus": "ok"
+    },
+    {
+      "number": 59,
+      "issueUrl": "https://github.com/ochisamu/ochisamu.info/issues/59",
+      "sourceUrl": "https://blog.song.mu/entry/agents-md-and-agent-skills",
+      "fetchStatus": "ok"
+    }
+  ]
+}
