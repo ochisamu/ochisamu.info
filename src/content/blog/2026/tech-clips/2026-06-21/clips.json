@@ -1,0 +1,21 @@
+{
+  "generatedAt": "2026-06-21T20:08:12.532811+09:00",
+  "generator": "deepagents",
+  "coverImage": {
+    "enabled": true,
+    "path": "cover.png",
+    "model": "gpt-image-2",
+    "size": "1536x1024",
+    "quality": "high",
+    "prompt": "Create a landscape editorial cover illustration for a Japanese personal\n        technical blog weekly roundup. The image should focus on the technical\n        articles that were read, not on the act of collecting or summarizing them.\n\n        Visual source notes:\n        ## Article 1\n- **title**: 【図解】エンジニアの「雑なMermaid」を、ビジネス側に刺さる図解に変換する - Qiita  \n- **central theme**: Mermaidで図の構造を先に確定し、画像生成は清書（整形）だけに任せることで破綻しにくくする。  \n- **visualizable technical motifs**:\n  - 「Mermaid → 清書用Gem → インフォグラフィック画像」分担図（工程フロー3段）\n  - 白背景・日本語ゴシック体の“整った図”（ビジネス向け体裁のイメージ）\n  - 箱と矢印の構成図（構造が確定して矢印の向きが保持される表現）\n  - 例示：AWS構成（3層Webアプリ）やパイプライン、業務フローを示すアイコン付き図の概念図\n- **Japanese labels**:\n  - 「Mermaidで構造固定」\n  - 「日本語ゴシック体」\n  - 「白背景・図解」\n- **1 thing to avoid misrepresenting**:\n  - **公式アイコンが“完全に正確なブランド準拠で再現される”**と断定しない（記事では期待しすぎ注意）。\n\n---\n\n## combined cover concept\nMermaidで図の**骨組み（構造定義）**を確定させ、「Gem/画像生成」は**清書（見た目の整形）**だけを担当する流れを、3段フローで表現したカバーにする。白背景に日本語ゴシック体で、アイコン付きの構成図が“整う”ビジュアル（Mermaidの箱矢印→インフォグラフィック）を対比させて、技術ブログ向けに分かりやすくまとめる。  \n\n- **shared motifs that connect the articles**\n  - Mermaidを“下書き”ではなく**中間表現（構造定義）**として使う\n  - **いきなり文章を投げない**／構造を先に確定して破綻を減らす発想\n  - **日本語で読める図解**を得るための“整形”工程（白背景・ゴシック体）\n\n        Visual direction:\n        - Make the actual article contents the main subject: technical concepts,\n          architecture fragments, code/data/network abstractions, APIs, runtime\n          behavior, constraints, and implementation trade-offs.\n        - Synthesize the articles into one coherent editorial image. It should feel\n          like a visual memory of what was read this week.\n        - Avoid depicting the publishing workflow, issue management, clipping,\n          sorting, reviewing, automation, or a step-by-step process chart.\n        - Use clean Japanese typography only where it helps the topic-focused cover.\n        - The title 「今週読んだ技術記事メモ」 may appear as a small editorial heading,\n          but it should not dominate the image.\n        - Include 2-4 short Japanese topic labels derived from the source article\n          context when they fit naturally. English technical terms from article\n          titles are allowed only when necessary.\n        - Use the site's palette: warm paper, black ink, teal, rust orange, and a\n          small yellow accent.\n        - Clean editorial composition, subtle grid paper texture, crisp vector-like\n          shapes, production-quality blog cover.\n\n        Hard constraints:\n        - Do not include a date.\n        - Do not add filler pseudo text.\n        - Do not reproduce screenshots, product UIs, website layouts, logos, or\n          brand marks.\n        - Do not include people, faces, mascots, or photorealistic devices.\n        - The result should work as an article image, not an advertisement.",
+    "error": null
+  },
+  "issues": [
+    {
+      "number": 54,
+      "issueUrl": "https://github.com/ochisamu/ochisamu.info/issues/54",
+      "sourceUrl": "https://qiita.com/ktdatascience/items/4b35eb4e157becfac073",
+      "fetchStatus": "ok"
+    }
+  ]
+}
